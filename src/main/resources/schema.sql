@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS board (
+  id INT NOT NULL AUTO_INCREMENT,
+  created_date DATE NOT NULL,
+  PRIMARY KEY (id));

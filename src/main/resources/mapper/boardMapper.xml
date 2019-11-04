@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jam2in.arcus.board.repository.BoardRepository">
+    <insert id="insert">
+        INSERT INTO board VALUES (#{userId}, #{userPw}, #{userName}, #{userGender}, #{userEmail})
+    </insert>
+
+    <update id="update">
+        UPDATE user
+        SET userPw = #{userPw}, userName = #{userName}, userGender = #{userGender}, userEmail = #{userEmail}
+        WHERE userId = #{userId}
+    </update>
+
+    <delete id="delete" parameterType="string">
+        DELETE FROM user WHERE userId = #{userId}
+    </delete>
+
+    <select id="select" parameterType="string" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM user WHERE userId = #{userId}
+    </select>
+
+    <select id="selectAll" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM user
+    </select>
+</mapper>
