@@ -8,14 +8,14 @@ import java.util.List;
 @Repository
 public interface BoardRepository {
 
-    public void insert(Board board);
+    int insert(Board board);
 
-    public void update(Board board);
+    int update(Board board);
 
-    public void delete(String boardId);
+    int delete(int id);
 
-    public Board select(String boardId);
+    Board selectOne(int id);
 
-    public List<Board> selectAll();
+    List<Board> selectAll();
 
 }

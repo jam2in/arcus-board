@@ -3,25 +3,32 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jam2in.arcus.board.repository.BoardRepository">
-    <insert id="insert">
-        INSERT INTO board VALUES (#{userId}, #{userPw}, #{userName}, #{userGender}, #{userEmail})
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board (name)
+        VALUES (#{name})
     </insert>
 
     <update id="update">
-        UPDATE user
-        SET userPw = #{userPw}, userName = #{userName}, userGender = #{userGender}, userEmail = #{userEmail}
-        WHERE userId = #{userId}
+        UPDATE board
+        SET name = #{name}
+        WHERE id = #{id}
     </update>
 
-    <delete id="delete" parameterType="string">
-        DELETE FROM user WHERE userId = #{userId}
+    <delete id="delete">
+        DELETE FROM board
+        WHERE id = #{id}
     </delete>
 
-    <select id="select" parameterType="string" resultType="com.jam2in.arcus.board.model.Board">
-        SELECT * FROM user WHERE userId = #{userId}
+    <select id="selectOne" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT *
+        FROM board
+        WHERE id = #{id}
     </select>
 
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Board">
-        SELECT * FROM user
+        SELECT *
+        FROM board;
     </select>
+
 </mapper>
