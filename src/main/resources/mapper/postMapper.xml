@@ -23,14 +23,16 @@
     </delete>
 
     <select id="selectOne" resultType="com.jam2in.arcus.board.model.Post">
-        SELECT *
-        FROM post
-        WHERE post.id = #{post.id}
+        SELECT p.*, u.name user_name
+        FROM post p INNER JOIN user u
+        ON p.user_id = u.id
+        WHERE p.id = #{post.id}
     </select>
 
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">
-        SELECT *
-        FROM post
-        WHERE board_id = #{board_id}
+        SELECT p.*, u.name user_name
+        FROM post p INNER JOIN user u
+        ON p.user_id = u.id
+        WHERE p.board_id = #{board_id}
     </select>
 </mapper>

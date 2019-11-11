@@ -4,17 +4,12 @@ public class Comment {
 
     private int id;
     private int user_id;
+    private String user_name;
     private int post_id;
-
-    /*
     private int group;
-
     private int sequence;
-
     private int level;
-     */
-
-    private int content;
+    private String content;
 
     public int getId() {
         return id;
@@ -32,6 +27,14 @@ public class Comment {
         this.user_id = user_id;
     }
 
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
     public int getPost_id() {
         return post_id;
     }
@@ -40,11 +43,35 @@ public class Comment {
         this.post_id = post_id;
     }
 
-    public int getContent() {
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getContent() {
         return content;
     }
 
-    public void setContent(int content) {
+    public void setContent(String content) {
         this.content = content;
     }
 }

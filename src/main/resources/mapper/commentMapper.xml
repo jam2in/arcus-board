@@ -5,8 +5,9 @@
 <mapper namespace="com.jam2in.arcus.board.repository.CommentRepository">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO comment (user_id, post_id, content)
-        VALUES ((SELECT id FROM user ORDER BY RAND() LIMIT 1), #{post_id}, #{content})
+        INSERT INTO comment (user_id, post_id, `group`, sequence, `level`, content)
+        VALUES ((SELECT id FROM user ORDER BY RAND() LIMIT 1), #{post_id},
+        2,1,1, #{content})
     </insert>
 
     <update id="update">
@@ -20,13 +21,17 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="selectAll">
-        SELECT * FROM comment
-        WHERE comment.post_id = #{post_id}
+    <select id="selectAll" resultType="com.jam2in.arcus.board.model.Comment">
+        SELECT c.*, u.name user_name
+        FROM comment c INNER JOIN user u
+        ON c.user_id = u.id
+        WHERE c.post_id = #{post_id}
     </select>
 
-    <select id="selectOne">
-        SELECT * FROM comment
-        WHERE id = #{id}
+    <select id="selectOne" resultType="com.jam2in.arcus.board.model.Comment">
+        SELECT c.*, u.name user_name
+        FROM comment c INNER JOIN user u
+        ON c.user_id = u.id
+        WHERE c.id = #{id}
     </select>
 </mapper>

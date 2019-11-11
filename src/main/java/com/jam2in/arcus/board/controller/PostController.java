@@ -1,8 +1,10 @@
 package com.jam2in.arcus.board.controller;
 
+import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
 import com.jam2in.arcus.board.service.BoardService;
+import com.jam2in.arcus.board.service.CommentService;
 import com.jam2in.arcus.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class PostController {
@@ -22,6 +26,8 @@ public class PostController {
     private PostService postService;
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private CommentService commentService;
 
     @RequestMapping(value = "/post/write", method = RequestMethod.POST)
     public String write(@RequestParam("board_id") String board_id, Model model) {
@@ -60,6 +66,8 @@ public class PostController {
     public String detail(@RequestParam int id, Model model) {
         logger.info("title : {}", id);
         Post post = postService.get(id);
+        List<Comment> comments = commentService.getAll(post.getId());
+        model.addAttribute("comments", comments);
         model.addAttribute("post", post);
         return "detail";
     }

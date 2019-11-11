@@ -15,24 +15,24 @@
 <table class="table table-hover">
      <tr>
          <th th:text="${post.title}"></th>
-         <th th:text="${post.user_id}"></th>
+         <th th:text="${post.user_name}"></th>
      </tr>
     <tr>
         <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
     </tr>
 </table>
-
-<div class="row border">
-    <div class="col-8" th:text="comment1">
+<span>댓글</span>
+<div class="row border" th:each="comment : ${comments}">
+    <div class="col-8" th:text="${comment.content}">
     </div>
-    <div class="col-4" th:text="ID">
-    </div>
+    <div class="col-4" th:text="${comment.user_name}"></div>
 </div>
-<form>
+<form action="/cmt/add" method="post">
+    <input type="hidden" name="post_id" th:value="${post.id}"/>
     <div class="input-group mb-3">
-        <textarea class="form-control" rows="1" placeholder="댓글을 입력하세요"></textarea>
+        <textarea class="form-control" rows="1" name="content" placeholder="댓글을 입력하세요"></textarea>
         <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="add_comment">등록</button>
+            <button class="btn btn-outline-secondary" type="submit" id="add_comment">등록</button>
         </div>
     </div>
 </form>
