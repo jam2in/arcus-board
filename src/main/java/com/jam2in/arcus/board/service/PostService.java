@@ -23,8 +23,8 @@ public class PostService {
         return postRepository.update(post);
     }
 
-    public int delete(Post post) {
-        return postRepository.delete(post.getId());
+    public int delete(int id) {
+        return postRepository.delete(id);
     }
 
     public Post get(int id) {

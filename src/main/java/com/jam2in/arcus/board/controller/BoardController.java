@@ -1,7 +1,6 @@
 package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Board;
-import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.PostService;
 import org.slf4j.Logger;

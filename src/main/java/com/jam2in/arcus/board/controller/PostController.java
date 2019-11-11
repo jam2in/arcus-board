@@ -2,6 +2,7 @@ package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
+import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ public class PostController {
     PostRepository postRepository;
     @Autowired
     private PostService postService;
+    @Autowired
+    private BoardService boardService;
 
     @RequestMapping(value = "/post/write", method = RequestMethod.POST)
     public String write(@RequestParam("board_id") String board_id, Model model) {
@@ -36,9 +39,9 @@ public class PostController {
 
     @RequestMapping(value = "/post/edit", method = RequestMethod.GET)
     public String edit(@RequestParam int id, Model model) {
-        logger.info("id : {}", id);
-        model.addAttribute("post", postService.get(id));
-        return "edit";
+        logger.info("[EDIT]post_id : {}", id);
+        model.addAttribute(postService.get(id));
+        return "postEdit";
     }
     @RequestMapping(value = "/post/update", method = RequestMethod.POST)
     public String update(@ModelAttribute Post post) {
@@ -47,14 +50,17 @@ public class PostController {
     }
 
     @RequestMapping("/post/delete")
-    public String delete(@RequestParam int board_id) {
+    public String delete(@RequestParam int id) {
+        int board_id = postService.get(id).getBoard_id();
+        postService.delete(id);
         return "redirect:/board/info?id=" + board_id;
     }
 
     @RequestMapping("/post/detail")
     public String detail(@RequestParam int id, Model model) {
         logger.info("title : {}", id);
-        model.addAttribute("post", postService.get(id));
+        Post post = postService.get(id);
+        model.addAttribute("post", post);
         return "detail";
     }
 

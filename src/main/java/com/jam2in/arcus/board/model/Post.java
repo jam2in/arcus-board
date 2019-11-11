@@ -3,6 +3,7 @@ package com.jam2in.arcus.board.model;
 public class Post {
 
     private int id;
+    private int user_id;
     private int board_id;
     private int no;
     private String title;
@@ -14,6 +15,14 @@ public class Post {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public int getBoard_id() {

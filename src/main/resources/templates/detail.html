@@ -7,26 +7,37 @@
     <title></title>
 </head>
 <body>
-<br/>
-<table class="table table-hover">
-     <tr>
-         <th th:text="${post.title}"></th>
-         <th th:text="${post.board_id}"></th>
-     </tr>
-    <tr>
-        <td colspan="2" th:text="${post.content}"></td>
-    </tr>
-</table>
-<p>댓글</p>
-<div th:each="comment: ${comments}">
-
-</div>
-<input>
-<a class="btn btn-light" th:href="@{/post/edit(id=${post.id})}">수정</a>
-<a class="btn btn-light">삭제</a>
 <form action="/board/info" method="get">
     <input type="hidden" name="id" th:value="${post.board_id}" />
     <button type="submit" class="btn btn-light">목록</button>
 </form>
+<br/>
+<table class="table table-hover">
+     <tr>
+         <th th:text="${post.title}"></th>
+         <th th:text="${post.user_id}"></th>
+     </tr>
+    <tr>
+        <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
+    </tr>
+</table>
+
+<div class="row border">
+    <div class="col-8" th:text="comment1">
+    </div>
+    <div class="col-4" th:text="ID">
+    </div>
+</div>
+<form>
+    <div class="input-group mb-3">
+        <textarea class="form-control" rows="1" placeholder="댓글을 입력하세요"></textarea>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="add_comment">등록</button>
+        </div>
+    </div>
+</form>
+<br/>
+<a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}}">수정</a>
+<a class="btn btn-light" th:href="@{'/post/delete?id=' + ${post.id}}">삭제</a>
 </body>
 </html>
