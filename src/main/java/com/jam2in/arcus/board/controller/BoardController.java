@@ -1,7 +1,9 @@
 package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Board;
+import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.service.BoardService;
+import com.jam2in.arcus.board.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private PostService postService;
 
     @RequestMapping("/")
     public String home(Model model) {
@@ -91,11 +95,21 @@ public class BoardController {
         return "redirect:/board";
     }
 
+    /* ORIGINAL
     @RequestMapping(path = "/board/info", method = RequestMethod.GET)
     public String get(@RequestParam int id) {
         LOGGER.info("GET BOARD");
         boardService.get(id);
         return "board";
+    }
+     */
+    @RequestMapping(path = "/board/info", method = RequestMethod.GET)
+    public String get(@RequestParam int id, Model model) {
+        LOGGER.info("GET BOARD # {}", id);
+        model.addAttribute("board_id", id);
+        model.addAttribute("board_name", boardService.get(id).getName());
+        model.addAttribute("posts", postService.getAll(id));
+        return "list";
     }
 
     @RequestMapping(path = "/board", method = RequestMethod.GET)

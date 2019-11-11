@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jam2in.arcus.board.repository.PostRepository">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post (board_id, no, title, content)
+        VALUES (#{board_id}, (SELECT IFNULL(MAX(no)+1, 1)
+                            FROM post AS p WHERE board_id=#{board_id}), #{title}, #{content})
+    </insert>
+
+    <update id="update">
+        UPDATE post
+        SET title = #{title}, content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM post
+        WHERE id = #{id}
+    </delete>
+
+    <select id="selectOne" resultType="com.jam2in.arcus.board.model.Post">
+        SELECT *
+        FROM post
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">
+        SELECT *
+        FROM post
+        WHERE board_id = #{board.id};
+    </select>
+</mapper>

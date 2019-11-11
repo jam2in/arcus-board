@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>게시글 목록</title>
+</head>
+<body>
+<div>
+    <h2 th:text="${board_name}"></h2>
+</div>
+<br/><br/>
+
+
+    <table class="table table-hover">
+        <tr>
+            <th>#</th>
+            <th>제목</th>
+            <th>작성일</th>
+        </tr>
+        <tr th:each="post: ${posts}">
+            <form th:object="${post}" action="/post/detail" method="post">
+                <td>
+                    <a th:href="@{'/post/detail?id='+${post.id}}" th:text="${post.no}"></a>
+                </td>
+                <td>
+                    <a name="title" th:href="@{'/post/detail?id='+${post.id}}"  th:text="${post.title}"></a>
+                </td>
+                <td th:text="TEMP.2019-12-25"></td>
+            <!-- <td><fmt:formatDate value="${board.reg_date}" pattern="MM/ dd" /></td> -->
+            </form>
+        </tr>
+    </table>
+
+<div id="pagination_add">
+    <div class="row">
+        <div class="col">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#">&laquo</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">&raquo</a>
+                </li>
+            </ul>
+        </div>
+        <form action="/post/write" method="post">
+            <input type="hidden" name="board_id" th:value="${board_id}" />
+            <button type="submit" class="btn btn-light">글 등록</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title></title>
+</head>
+<body>
+<br/>
+<table class="table table-hover">
+     <tr>
+         <th th:text="${post.title}"></th>
+         <th th:text="${post.board_id}"></th>
+     </tr>
+    <tr>
+        <td colspan="2" th:text="${post.content}"></td>
+    </tr>
+</table>
+<p>댓글</p>
+<div th:each="comment: ${comments}">
+
+</div>
+<input>
+<a class="btn btn-light" th:href="@{/post/edit(id=${post.id})}">수정</a>
+<a class="btn btn-light">삭제</a>
+<form action="/board/info" method="get">
+    <input type="hidden" name="id" th:value="${post.board_id}" />
+    <button type="submit" class="btn btn-light">목록</button>
+</form>
+</body>
+</html>
