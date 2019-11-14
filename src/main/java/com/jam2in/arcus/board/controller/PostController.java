@@ -59,6 +59,7 @@ public class PostController {
     public String delete(@RequestParam int id) {
         int board_id = postService.get(id).getBoard_id();
         postService.delete(id);
+        logger.info("[DELETE]post_id : {}", id);
         return "redirect:/board/info?id=" + board_id;
     }
 

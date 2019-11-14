@@ -29,10 +29,26 @@
         WHERE p.id = #{post.id}
     </select>
 
+    <select id="selectPage" resultType="com.jam2in.arcus.board.model.Post">
+        SELECT p.*, u.name user_name
+        FROM post p INNER JOIN user u
+        ON p.user_id = u.id
+        WHERE p.board_id = #{board_id}
+        ORDER BY p.updated_date DESC
+        LIMIT #{pagination.startList}, #{pagination.pageSize}
+    </select>
+
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">
         SELECT p.*, u.name user_name
         FROM post p INNER JOIN user u
         ON p.user_id = u.id
         WHERE p.board_id = #{board_id}
+        ORDER BY p.updated_date DESC
+    </select>
+
+    <select id="countPost" resultType="java.lang.Integer">
+        SELECT count(*) as listCnt
+        FROM post
+        WHERE post.board_id = #{id}
     </select>
 </mapper>

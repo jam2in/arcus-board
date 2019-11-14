@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CommentController {
@@ -27,4 +28,19 @@ public class CommentController {
         model.addAttribute("comments", commentService.getAll(comment.getPost_id()));
         return "redirect:/post/detail?id=" + comment.getPost_id();
     }
+
+    @RequestMapping(path = "cmt/edit")
+    public String edit(@ModelAttribute Comment comment, Model model) {
+        commentService.update(comment);
+        logger.info("[EDIT]comment : {}", comment.getContent());
+        return "redirect:/post/detail?id=" + comment.getPost_id();
+    }
+
+    @RequestMapping(path = "cmt/delete")
+    public String delete(@RequestParam int id) {
+        Comment comment = commentService.get(id);
+        commentService.delete(id);
+        return "redirect:/post/detail?id=" + comment.getPost_id();
+    }
+
 }

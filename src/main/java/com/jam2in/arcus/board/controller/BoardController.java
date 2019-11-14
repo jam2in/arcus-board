@@ -1,11 +1,13 @@
 package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Board;
+import com.jam2in.arcus.board.model.Pagination;
 import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -103,11 +105,30 @@ public class BoardController {
     }
      */
     @RequestMapping(path = "/board/info", method = RequestMethod.GET)
-    public String get(@RequestParam int id, Model model) {
-        LOGGER.info("GET BOARD # {}", id);
+    public String get(@RequestParam int id,
+                      @RequestParam(required = false, defaultValue = "1") int pageIndex,
+                      @RequestParam(required = false, defaultValue = "1") int groupIndex,
+                      Model model){
+
+        /* TEST CASE
+        for (int i = 0; i < 300; i++) {
+            Post post = new Post();
+            post.setTitle("title" + i);
+            post.setContent("content" + i);
+            post.setBoard_id(id);
+            postService.create(post);
+            Thread.sleep(1000);
+        }
+        */
+        int listCnt = postService.countPost(id);
+
+        Pagination pagination = new Pagination();
+        pagination.pageInfo(pageIndex, groupIndex, listCnt);
         model.addAttribute("board_id", id);
         model.addAttribute("board_name", boardService.get(id).getName());
-        model.addAttribute("posts", postService.getAll(id));
+        model.addAttribute("posts", postService.getPage(id, pagination));
+        LOGGER.info("Board #{}, page#{} : {}", id, pagination.getGroupIndex(), pagination.getPageIndex());
+        model.addAttribute("pagination", pagination);
         return "list";
     }
 

@@ -1,5 +1,7 @@
 package com.jam2in.arcus.board.model;
 
+import java.sql.Timestamp;
+
 public class Comment {
 
     private int id;
@@ -10,6 +12,7 @@ public class Comment {
     private int sequence;
     private int level;
     private String content;
+    private Timestamp updated_date;
 
     public int getId() {
         return id;
@@ -73,5 +76,13 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Timestamp getUpdated_date() {
+        return updated_date;
+    }
+
+    public void setUpdated_date(Timestamp updated_date) {
+        this.updated_date = updated_date;
     }
 }

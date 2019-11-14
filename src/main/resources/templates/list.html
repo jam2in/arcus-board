@@ -19,6 +19,7 @@
             <th>#</th>
             <th>제목</th>
             <th>작성일</th>
+            <th>작성자</th>
         </tr>
         <tr th:each="post: ${posts}">
             <form th:object="${post}" action="/post/detail" method="post">
@@ -28,8 +29,8 @@
                 <td>
                     <a name="title" th:href="@{'/post/detail?id='+${post.id}}"  th:text="${post.title}"></a>
                 </td>
-                <td th:text="TEMP.2019-12-25"></td>
-            <!-- <td><fmt:formatDate value="${board.reg_date}" pattern="MM/ dd" /></td> -->
+                <td th:text="${post.updated_date}? ${#dates.format(post.updated_date, 'yyyy-MM-dd hh:MM')}"></td>
+                <td th:text="${post.user_name}"></td>
             </form>
         </tr>
     </table>
@@ -37,17 +38,34 @@
 <div id="pagination_add">
     <div class="row">
         <div class="col">
-            <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#">&laquo</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">&raquo</a>
-                </li>
-            </ul>
+                <ul class="pagination">
+                    <li th:class="(${pagination.prev == false}) ? 'page-item disabled'">
+                        <form action="/board/info" method="get">
+                            <input type="hidden" name="id" th:value="${board_id}"/>
+                            <input type="hidden" name="groupIndex" th:value="${pagination.groupIndex}-1"/>
+                            <input type="hidden" name="pageIndex" th:value="(${pagination.groupIndex}-2)*${pagination.groupSize}+1"/>
+                            <button type="submit" class="page-link">&laquo</button>
+                        </form>
+                    </li>
+                    <div th:each="i : ${#numbers.sequence(pagination.startRow, pagination.endRow)}">
+                        <form action="/board/info" method="get">
+                            <input type="hidden" name="id" th:value="${board_id}"/>
+                            <li th:class="(${pagination.pageIndex} == ${i}) ? 'page-item active'">
+                                <input type="hidden" name="groupIndex" th:value="${pagination.groupIndex}"/>
+                                <input type="hidden" name="pageIndex" th:value="${i}"/>
+                                <button type="submit" class="page-link" th:text="${i}"></button>
+                            </li>
+                        </form>
+                    </div>
+                    <li th:class="(${pagination.next} == false) ? 'page-item disabled'">
+                        <form>
+                            <input type="hidden" name="id" th:value="${board_id}"/>
+                            <input type="hidden" name="groupIndex" th:value="${pagination.groupIndex}+1"/>
+                            <input type="hidden" name="pageIndex" th:value="${pagination.groupIndex} * ${pagination.groupSize} + 1"/>
+                            <button type="submit" class="page-link">&raquo</button>
+                        </form>
+                    </li>
+                </ul>
         </div>
         <form action="/post/write" method="post">
             <input type="hidden" name="board_id" th:value="${board_id}" />

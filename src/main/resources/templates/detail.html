@@ -23,16 +23,18 @@
 </table>
 <span>댓글</span>
 <div class="row border" th:each="comment : ${comments}">
-    <div class="col-8" th:text="${comment.content}">
-    </div>
-    <div class="col-4" th:text="${comment.user_name}"></div>
+    <div class="col-6" th:text="${comment.content}"></div>
+    <div class="col-1" th:text="${comment.user_name}"></div>
+    <div class="col-3" th:text="${#dates.format(comment.updated_date, 'yyyy-MM-dd hh:mm')}"></div>
+    <a class="btn btn-light btn-sm" th:href="@{'/cmt/delete?id=' + ${comment.id}}">삭제</a>
+    <a class="btn btn-light btn-sm" th:href="@{'/cmt/edit?id=' + ${comment.id}}">수정</a>
 </div>
 <form action="/cmt/add" method="post">
     <input type="hidden" name="post_id" th:value="${post.id}"/>
     <div class="input-group mb-3">
         <textarea class="form-control" rows="1" name="content" placeholder="댓글을 입력하세요"></textarea>
         <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="submit" id="add_comment">등록</button>
+            <button class="btn" type="submit" id="add_comment">등록</button>
         </div>
     </div>
 </form>

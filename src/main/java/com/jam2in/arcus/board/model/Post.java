@@ -1,6 +1,10 @@
 package com.jam2in.arcus.board.model;
 
-public class Post {
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
+public class Post{
 
     private int id;
     private int user_id;
@@ -9,6 +13,7 @@ public class Post {
     private int no;
     private String title;
     private String content;
+    private Timestamp updated_date;
 
     public int getId() {
         return id;
@@ -65,4 +70,13 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public Timestamp getUpdated_date() {
+        return updated_date;
+    }
+
+    public void setUpdated_date(Timestamp updated_date) {
+        this.updated_date = updated_date;
+    }
+
 }
