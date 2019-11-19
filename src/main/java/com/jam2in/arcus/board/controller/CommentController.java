@@ -8,10 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -30,7 +29,13 @@ public class CommentController {
     }
 
     @RequestMapping(path = "cmt/edit")
-    public String edit(@ModelAttribute Comment comment, Model model) {
+    public String edit(@RequestParam int id, Model model) {
+
+        model.addAttribute(commentService.get(id));
+        return "";
+    }
+    @RequestMapping(path = "cmt/update")
+    public String update(@ModelAttribute Comment comment, Model model) {
         commentService.update(comment);
         logger.info("[EDIT]comment : {}", comment.getContent());
         return "redirect:/post/detail?id=" + comment.getPost_id();
@@ -41,6 +46,13 @@ public class CommentController {
         Comment comment = commentService.get(id);
         commentService.delete(id);
         return "redirect:/post/detail?id=" + comment.getPost_id();
+    }
+
+    @ResponseBody
+    @RequestMapping(path = "cmt/list", method = RequestMethod.GET)
+    public List<Comment> getCommentList(int id) {
+        logger.info("ajax id : " + id);
+        return commentService.getAll(id);
     }
 
 }

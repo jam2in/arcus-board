@@ -67,8 +67,7 @@ public class PostController {
     public String detail(@RequestParam int id, Model model) {
         logger.info("title : {}", id);
         Post post = postService.get(id);
-        List<Comment> comments = commentService.getAll(post.getId());
-        model.addAttribute("comments", comments);
+        model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);
         return "detail";
     }

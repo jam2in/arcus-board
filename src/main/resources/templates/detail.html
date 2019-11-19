@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<layout:html lang="en"
+             xmlns:th="http://www.thymeleaf.org"
+             layout:decorator="mainLayout"
+             xmlns:layout="http://www.w3.org/1999/xhtml"
+>
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title></title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/js/Comment.js"></script>
 </head>
 <body>
 <form action="/board/info" method="get">
@@ -21,16 +27,19 @@
         <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
     </tr>
 </table>
-<span>댓글</span>
-<div class="row border" th:each="comment : ${comments}">
+<!-- comment list>
+<div class="my-3 p-3 bg-white rounded shadow-sm row border" th:each="comment : ${comments}">
     <div class="col-6" th:text="${comment.content}"></div>
     <div class="col-1" th:text="${comment.user_name}"></div>
     <div class="col-3" th:text="${#dates.format(comment.updated_date, 'yyyy-MM-dd hh:mm')}"></div>
     <a class="btn btn-light btn-sm" th:href="@{'/cmt/delete?id=' + ${comment.id}}">삭제</a>
     <a class="btn btn-light btn-sm" th:href="@{'/cmt/edit?id=' + ${comment.id}}">수정</a>
 </div>
+<comment list -->
+<div class="my-3 p-3 bg-white rounded shadow-sm row border" id="replyList">
+</div>
 <form action="/cmt/add" method="post">
-    <input type="hidden" name="post_id" th:value="${post.id}"/>
+    <input type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
     <div class="input-group mb-3">
         <textarea class="form-control" rows="1" name="content" placeholder="댓글을 입력하세요"></textarea>
         <div class="input-group-append">
@@ -42,4 +51,4 @@
 <a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}}">수정</a>
 <a class="btn btn-light" th:href="@{'/post/delete?id=' + ${post.id}}">삭제</a>
 </body>
-</html>
+</layout:html>
