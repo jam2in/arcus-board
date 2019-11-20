@@ -36,17 +36,15 @@
     <a class="btn btn-light btn-sm" th:href="@{'/cmt/edit?id=' + ${comment.id}}">수정</a>
 </div>
 <comment list -->
-<div class="my-3 p-3 bg-white rounded shadow-sm row border" id="replyList">
-</div>
-<form action="/cmt/add" method="post">
-    <input type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
+<div id="CommentList"></div>
+<!--<form action="/cmt/add" method="post">-->
     <div class="input-group mb-3">
-        <textarea class="form-control" rows="1" name="content" placeholder="댓글을 입력하세요"></textarea>
+        <input type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
+        <textarea class="form-control" rows="1" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
         <div class="input-group-append">
-            <button class="btn" type="submit" id="add_comment">등록</button>
+            <button class="btn" id="btnCmtAdd">등록</button>
         </div>
     </div>
-</form>
 <br/>
 <a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}}">수정</a>
 <a class="btn btn-light" th:href="@{'/post/delete?id=' + ${post.id}}">삭제</a>

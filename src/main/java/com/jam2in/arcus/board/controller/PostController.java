@@ -65,7 +65,7 @@ public class PostController {
 
     @RequestMapping("/post/detail")
     public String detail(@RequestParam int id, Model model) {
-        logger.info("title : {}", id);
+        logger.info("post detail #{}", id);
         Post post = postService.get(id);
         model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);
