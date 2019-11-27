@@ -34,8 +34,8 @@
         FROM post p INNER JOIN user u
         ON p.user_id = u.id
         WHERE p.board_id = #{board_id}
-        ORDER BY p.updated_date DESC
-        LIMIT #{pagination.startList}, #{pagination.pageSize}
+        ORDER BY p.no DESC
+        LIMIT #{startList}, #{pageSize}
     </select>
 
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">
@@ -43,7 +43,7 @@
         FROM post p INNER JOIN user u
         ON p.user_id = u.id
         WHERE p.board_id = #{board_id}
-        ORDER BY p.updated_date DESC
+        ORDER BY p.no DESC
     </select>
 
     <select id="countPost" resultType="java.lang.Integer">

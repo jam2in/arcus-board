@@ -1,5 +1,7 @@
 package com.jam2in.arcus.board.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.sql.Timestamp;
 
 public class Comment {
@@ -12,6 +14,7 @@ public class Comment {
     private int sequence;
     private int level;
     private String content;
+    @DateTimeFormat (pattern = "yyyy-MM-dd hh:MM")
     private Timestamp updated_date;
 
     public int getId() {

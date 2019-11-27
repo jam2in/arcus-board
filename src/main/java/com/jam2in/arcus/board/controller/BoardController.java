@@ -123,10 +123,12 @@ public class BoardController {
         int listCnt = postService.countPost(id);
 
         Pagination pagination = new Pagination();
-        pagination.pageInfo(pageIndex, groupIndex, listCnt);
+        pagination.setPageSize(20);
+        pagination.setGroupSize(10);
+        pagination.pageInfo(groupIndex, pageIndex, listCnt);
         model.addAttribute("board_id", id);
         model.addAttribute("board_name", boardService.get(id).getName());
-        model.addAttribute("posts", postService.getPage(id, pagination));
+        model.addAttribute("posts", postService.getPage(id, pagination.getStartList()-1, pagination.getPageSize()));
         LOGGER.info("Board #{}, page#{} : {}", id, pagination.getGroupIndex(), pagination.getPageIndex());
         model.addAttribute("pagination", pagination);
         return "list";

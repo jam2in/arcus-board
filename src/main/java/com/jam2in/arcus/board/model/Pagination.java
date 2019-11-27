@@ -11,8 +11,8 @@ public class Pagination {
     private int pageIndex;
     private int pageCnt;
     private int listCnt;
-    private int pageSize = 20;
-    private int groupSize = 3;
+    private int pageSize;
+    private int groupSize;
 
     public int getStartRow() {
         return startRow;
@@ -102,17 +102,17 @@ public class Pagination {
         this.groupSize = groupSize;
     }
 
-    public void pageInfo(int pageIndex, int groupIndex, int listCnt) {
-        this.pageIndex = pageIndex;
+    public void pageInfo(int groupIndex, int pageIndex, int listCnt) {
         this.groupIndex = groupIndex;
+        this.pageIndex = pageIndex;
         this.listCnt = listCnt;
 
         //total number of page
-        this.pageCnt = (int) Math.ceil(listCnt/pageSize);
+        this.pageCnt = (int)Math.ceil(listCnt/pageSize);
 
         // first, last index of the page
-        this.startRow = (groupIndex-1)* groupSize + 1;
-        this.endRow = groupIndex* groupSize;
+        this.startRow = (groupIndex-1) * groupSize + 1;
+        this.endRow = groupIndex * groupSize;
 
         //starting index of the post
         this.startList = (pageIndex -1)*pageSize + 1;
@@ -123,7 +123,10 @@ public class Pagination {
         //Next Button
         this.next = endRow < pageCnt;
         if (this.endRow > this.pageCnt) {
-            this.endRow = this.pageCnt;
+            if(pageCnt == 0) this.endRow = this.startRow;
+            else this.endRow = this.pageCnt;
         }
+        System.out.println(this.listCnt + " " + this.pageCnt + " " + this.endRow);
+
     }
 }

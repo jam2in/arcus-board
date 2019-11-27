@@ -27,26 +27,44 @@
         <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
     </tr>
 </table>
-<!-- comment list>
-<div class="my-3 p-3 bg-white rounded shadow-sm row border" th:each="comment : ${comments}">
-    <div class="col-6" th:text="${comment.content}"></div>
-    <div class="col-1" th:text="${comment.user_name}"></div>
-    <div class="col-3" th:text="${#dates.format(comment.updated_date, 'yyyy-MM-dd hh:mm')}"></div>
-    <a class="btn btn-light btn-sm" th:href="@{'/cmt/delete?id=' + ${comment.id}}">삭제</a>
-    <a class="btn btn-light btn-sm" th:href="@{'/cmt/edit?id=' + ${comment.id}}">수정</a>
-</div>
-<comment list -->
-<div id="CommentList"></div>
-<!--<form action="/cmt/add" method="post">-->
-    <div class="input-group mb-3">
-        <input type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
-        <textarea class="form-control" rows="1" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
-        <div class="input-group-append">
-            <button class="btn" id="btnCmtAdd">등록</button>
-        </div>
-    </div>
-<br/>
 <a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}}">수정</a>
 <a class="btn btn-light" th:href="@{'/post/delete?id=' + ${post.id}}">삭제</a>
+<div id="commentList"></div>
+<div class="row">
+    <div class="col">
+        <div id="cmtPagination">
+            <ul class="pagination">
+                <li th:class="(${pagination.prev == false}) ? 'page-item disabled'">
+                    <input type="hidden" name="prev_pageIndex" id="prev_pageIndex" th:value="(${pagination.groupIndex}-2)*${pagination.groupSize}+1"/>
+                    <input type="hidden" name="prev_groupIndex" id="prev_groupIndex" th:value="${pagination.groupIndex}-1"/>
+                    <button type="button" class="page-link" onclick="'prevCmtPaging()">&laquo</button>
+                </li>
+                <div th:each="i : ${#numbers.sequence(pagination.startRow, pagination.endRow)}">
+                    <li th:class="(${pagination.startRow} == ${pagination.endRow}) ? 'page-item disabled'">
+                        <button class="page-link" th:text="${i}" th:onclick="'showCmtList(\''+${pagination.groupIndex}+'\',\''+${i} +'\')'"></button>
+                    </li>
+                </div>
+                <li th:class="(${pagination.next == false}) ? 'page-item disabled'">
+                    <input type="hidden" id="next_groupIndex" th:value="${pagination.groupIndex}+1"/>
+                    <input type="hidden" id="next_pageIndex" th:value="(${pagination.groupIndex}*${pagination.groupSize})+1"/>
+                    <button type="button" class="page-link" onclick="nextCmtPaging()">&raquo</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <form action="/post/write" method="post">
+        <input type="hidden" name="board_id" th:value="${board_id}" />
+        <button type="submit" class="btn btn-light">글 등록</button>
+    </form>
+</div>
+<div class="input-group mb-3">
+    <input type="hidden" id="post_id" name="post_id" th:value="${post.id}"/>
+    <textarea class="form-control" rows="1" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
+    <div class="input-group-append">
+        <button class="btn" id="btnCmtAdd">등록</button>
+    </div>
+</div>
+<br/>
+
 </body>
 </layout:html>

@@ -1,6 +1,7 @@
 package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Comment;
+import com.jam2in.arcus.board.model.Pagination;
 import com.jam2in.arcus.board.repository.CommentRepository;
 import com.jam2in.arcus.board.service.CommentService;
 import org.slf4j.Logger;
@@ -22,12 +23,11 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(path = "cmt/add", method = RequestMethod.POST)
-    public String add(@RequestBody Comment comment) {
+    public void add(@RequestBody Comment comment) {
         if (commentService.create(comment) == 0) {
             //Response HTTP Error (CONFLICT)
         }
         logger.info("[ADDED]comment : {}, post_id: {}", comment.getContent(), comment.getPost_id());
-        return "";
     }
 
     @ResponseBody
@@ -43,20 +43,38 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(path = "cmt/delete")
-    public String delete(@RequestParam int id) {
+    public void delete(@RequestParam int id) {
         Comment comment = commentService.get(id);
         if (commentService.delete(id) == 0) {
             //Response HTTP Error (CONFLICT)
         }
-        logger.info("[DELETED]");
-        return "";
+        logger.info("[DELETED]comment : {}", id);
     }
 
     @ResponseBody
-    @RequestMapping(path = "cmt/list", method = RequestMethod.GET)
-    public List<Comment> getCommentList(@RequestParam int post_id) {
-        logger.info("ajax id : " + post_id);
-        return commentService.getAll(post_id);
+    @RequestMapping(path = "cmt", method = RequestMethod.GET)
+    public List<Comment> getComment(@RequestParam int post_id,
+                                    @RequestParam (required = false, defaultValue = "1")int groupIndex,
+                                    @RequestParam (required = false, defaultValue = "1")int pageIndex) {
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(20);
+        pagination.setGroupSize(3);
+        pagination.setListCnt(commentService.countCmt(post_id));
+        pagination.pageInfo(groupIndex, pageIndex, pagination.getListCnt());
+
+        return commentService.getPage(post_id, pagination.getStartList()-1, pagination.getPageSize());
     }
 
+    @ResponseBody
+    @RequestMapping(path = "cmt/pagination", method = RequestMethod.GET)
+    public Pagination getPagination(@RequestParam int post_id,
+                                    @RequestParam int pageIndex,
+                                    @RequestParam int groupIndex) {
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(20);
+        pagination.setGroupSize(3);
+        pagination.setListCnt(commentService.countCmt(post_id));
+        pagination.pageInfo(groupIndex, pageIndex, pagination.getListCnt());
+        return pagination;
+    }
 }
