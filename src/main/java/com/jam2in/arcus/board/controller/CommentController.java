@@ -72,7 +72,7 @@ public class CommentController {
                                     @RequestParam int groupIndex) {
         Pagination pagination = new Pagination();
         pagination.setPageSize(20);
-        pagination.setGroupSize(3);
+        pagination.setGroupSize(10);
         pagination.setListCnt(commentService.countCmt(post_id));
         pagination.pageInfo(groupIndex, pageIndex, pagination.getListCnt());
         return pagination;
