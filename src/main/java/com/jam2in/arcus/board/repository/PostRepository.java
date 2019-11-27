@@ -17,7 +17,7 @@ public interface PostRepository {
 
     Post selectOne(int id);
 
-    List<Post> selectPage(int board_id, Pagination pagination);
+    List<Post> selectPage(int board_id, int startList, int pageSize);
 
     List<Post> selectAll(int board_id);
 

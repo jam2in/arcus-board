@@ -32,8 +32,8 @@ public class PostService {
         return postRepository.selectOne(id);
     }
 
-    public List<Post> getPage(int board_id, Pagination pagination) {
-        return postRepository.selectPage(board_id, pagination);
+    public List<Post> getPage(int board_id, int startList, int pageSize) {
+        return postRepository.selectPage(board_id, startList, pageSize);
     }
 
     public List<Post> getAll(int board_id) {

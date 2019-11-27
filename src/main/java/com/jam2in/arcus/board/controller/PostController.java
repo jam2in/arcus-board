@@ -1,12 +1,14 @@
 package com.jam2in.arcus.board.controller;
 
 import com.jam2in.arcus.board.model.Comment;
+import com.jam2in.arcus.board.model.Pagination;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
 import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.CommentService;
 import com.jam2in.arcus.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,10 +67,33 @@ public class PostController {
 
     @RequestMapping("/post/detail")
     public String detail(@RequestParam int id, Model model) {
-        logger.info("post detail #{}", id);
+        /*
+        for (int i=0; i < 100; i ++) {
+            Comment comment = new Comment();
+            comment.setContent("comment"+i);
+            comment.setPost_id(328);
+            commentService.create(comment);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        */
         Post post = postService.get(id);
+
+        //Comment List Pagination
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(20);
+        pagination.setGroupSize(3);
+        pagination.setListCnt(commentService.countCmt(post.getId()));
+        pagination.pageInfo(1, 1, pagination.getListCnt());
+
+        logger.info("post detail #{}, pagination: {} {}", id, pagination.getStartRow(), pagination.getEndRow());
+
         model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);
+        model.addAttribute("pagination", pagination);
         return "detail";
     }
 
