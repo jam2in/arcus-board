@@ -23,7 +23,14 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "org.apache.logging.log4j", module: "log4j-api"
+    exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+}
+
 dependencies {
+    compile('com.navercorp.arcus:arcus-java-client:1.11.4')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-devtools')

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+// @Component - bean 생성 (class)
+// @PostConstruct - method bean 생성되면 callback
+
 @Controller
 public class BoardController {
 

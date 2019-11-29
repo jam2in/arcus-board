@@ -1,11 +1,15 @@
 package com.jam2in.arcus.board.model;
 
 
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-public class Post{
-
+@Component
+public class Post implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private int user_id;
     private String user_name;
