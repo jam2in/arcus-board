@@ -113,16 +113,6 @@ public class BoardController {
                       @RequestParam(required = false, defaultValue = "1") int groupIndex,
                       Model model){
 
-        /* TEST CASE
-        for (int i = 0; i < 300; i++) {
-            Post post = new Post();
-            post.setTitle("title" + i);
-            post.setContent("content" + i);
-            post.setBoard_id(id);
-            postService.create(post);
-            Thread.sleep(1000);
-        }
-        */
         int listCnt = postService.countPost(id);
 
         Pagination pagination = new Pagination();

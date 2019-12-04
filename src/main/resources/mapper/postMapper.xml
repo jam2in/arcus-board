@@ -51,4 +51,10 @@
         FROM post
         WHERE post.board_id = #{id}
     </select>
+
+    <update id="increaseViews">
+        UPDATE post
+        SET views = views + 1
+        WHERE id = #{id};
+    </update>
 </mapper>

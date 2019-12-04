@@ -1,13 +1,12 @@
 package com.jam2in.arcus.board.model;
 
-
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Component
-public class Post implements Serializable {
+public class PostInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private int user_id;
@@ -15,10 +14,19 @@ public class Post implements Serializable {
     private int board_id;
     private int no;
     private String title;
-    private String content;
     private Timestamp updated_date;
     private int views;
 
+    public PostInfo(Post post) {
+            this.id = post.getId();
+            this.user_id = post.getUser_id();
+            this.user_name = post.getUser_name();
+            this.board_id = post.getBoard_id();
+            this.no = post.getNo();
+            this.title = post.getTitle();
+            this.updated_date = post.getUpdated_date();
+            this.views = post.getViews();
+    }
     public int getId() {
         return id;
     }
@@ -67,14 +75,6 @@ public class Post implements Serializable {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Timestamp getUpdated_date() {
         return updated_date;
     }
@@ -89,5 +89,20 @@ public class Post implements Serializable {
 
     public void setViews(int views) {
         this.views = views;
+    }
+
+    public Post getPost() {
+        Post post = new Post();
+
+        post.setId(this.getId());
+        post.setUser_id(this.getUser_id());
+        post.setUser_name(this.getUser_name());
+        post.setBoard_id(this.getBoard_id());
+        post.setNo(this.getNo());
+        post.setTitle(this.getTitle());
+        post.setUpdated_date(this.getUpdated_date());
+        post.setViews(this.getViews());
+
+        return post;
     }
 }

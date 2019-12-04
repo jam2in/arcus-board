@@ -1,5 +1,6 @@
 package com.jam2in.arcus.board.service;
 
+import com.jam2in.arcus.board.BoardArcus;
 import com.jam2in.arcus.board.model.Board;
 import com.jam2in.arcus.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,11 @@ public class BoardService {
 
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private BoardArcus boardArcus;
 
     public int create(Board board) {
+        boardArcus.bopCreateBoard(board.getId());
         return boardRepository.insert(board);
     }
 
@@ -33,6 +37,8 @@ public class BoardService {
     }
 
     public Board get(int id) {
+        //temporary
+        //boardArcus.bopCreateBoard(id);
         return boardRepository.selectOne(id);
     }
 

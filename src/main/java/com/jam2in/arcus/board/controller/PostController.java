@@ -3,7 +3,6 @@ package com.jam2in.arcus.board.controller;
 import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.model.Pagination;
 import com.jam2in.arcus.board.model.Post;
-import com.jam2in.arcus.board.repository.PostRepository;
 import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.CommentService;
 import com.jam2in.arcus.board.service.PostService;
@@ -20,10 +19,8 @@ import java.util.List;
 @Controller
 public class PostController {
 
-    public static final Logger logger = LoggerFactory.getLogger(PostController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    @Autowired
-    PostRepository postRepository;
     @Autowired
     private PostService postService;
     @Autowired
@@ -67,20 +64,8 @@ public class PostController {
 
     @RequestMapping("/post/detail")
     public String detail(@RequestParam int id, Model model) {
-        /*
-        for (int i=0; i < 100; i ++) {
-            Comment comment = new Comment();
-            comment.setContent("comment"+i);
-            comment.setPost_id(328);
-            commentService.create(comment);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        */
         Post post = postService.get(id);
+        postService.increaseViews(id);
 
         //Comment List Pagination
         Pagination pagination = new Pagination();

@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 public class CommentController {
 
-    public static final Logger logger = LoggerFactory.getLogger(PostController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @Autowired
     CommentService commentService;

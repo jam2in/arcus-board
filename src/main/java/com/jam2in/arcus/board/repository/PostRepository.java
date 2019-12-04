@@ -21,5 +21,7 @@ public interface PostRepository {
 
     List<Post> selectAll(int board_id);
 
+    int increaseViews(int id);
+
     int countPost(int id);
 }
