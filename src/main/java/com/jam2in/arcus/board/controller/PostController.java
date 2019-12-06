@@ -28,7 +28,7 @@ public class PostController {
     @Autowired
     private CommentService commentService;
 
-    @RequestMapping(value = "/post/write", method = RequestMethod.POST)
+    @RequestMapping(value = "/post/write", method = RequestMethod.GET)
     public String write(@RequestParam("board_id") String board_id, Model model) {
         logger.info("id : {}", board_id);
         model.addAttribute("board_id", board_id);
@@ -43,29 +43,27 @@ public class PostController {
     }
 
     @RequestMapping(value = "/post/edit", method = RequestMethod.GET)
-    public String edit(@RequestParam int id, Model model) {
+    public String edit(@RequestParam int id, @RequestParam int board_id, Model model) {
         logger.info("[EDIT]post_id : {}", id);
-        model.addAttribute(postService.get(id));
+        model.addAttribute(postService.get(id, board_id));
         return "postEdit";
     }
     @RequestMapping(value = "/post/update", method = RequestMethod.POST)
     public String update(@ModelAttribute Post post) {
         postService.update(post);
-        return "redirect:/post/detail?id="+post.getId();
+        return "redirect:/post/detail?id="+post.getId()+"&board_id="+post.getBoard_id();
     }
 
     @RequestMapping("/post/delete")
-    public String delete(@RequestParam int id) {
-        int board_id = postService.get(id).getBoard_id();
-        postService.delete(id);
+    public String delete(@RequestParam int id, @RequestParam int board_id) {
+        postService.delete(id, board_id);
         logger.info("[DELETE]post_id : {}", id);
         return "redirect:/board/info?id=" + board_id;
     }
 
     @RequestMapping("/post/detail")
-    public String detail(@RequestParam int id, Model model) {
-        Post post = postService.get(id);
-        postService.increaseViews(id);
+    public String detail(@RequestParam int id, @RequestParam int board_id, Model model) {
+        Post post = postService.get(id, board_id);
 
         //Comment List Pagination
         Pagination pagination = new Pagination();

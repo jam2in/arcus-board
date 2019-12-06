@@ -20,34 +20,34 @@ public class PostService {
 
     public int create(Post post) {
         //최신 글 N개를 캐싱해야하므로 생성하자마자 캐싱
-        //postArcus.setPostIno(post);
+        int result = postRepository.insert(post);
+        postArcus.setPostInfo(post);
         //postArcus.setPostContent(post.getId(), post.getContent());
-        return postRepository.insert(post);
+        System.out.println(result);
+        return result;
     }
 
     public int update(Post post) {
-        //postArcus.setPostInfo(post);
-        if (!postArcus.setPostContent(post.getId(), post.getContent())) {
+        if (postArcus.updatePostInfo(post)) {
+            postArcus.setPostContent(post.getId(), post.getContent());
         }
         return postRepository.update(post);
     }
 
-    public int delete(int id) {
-        //postArcus.delPostInfo(id);
-        /*
-        if (!postArcus.delPostContent(id)) {
-        }
-         */
+    public int delete(int id, int board_id) {
+        postArcus.delPostInfo(id, board_id);
         return postRepository.delete(id);
     }
 
-    public Post get(int id) {
+    public Post get(int id, int board_id) {
+        increaseViews(id);
         Post post = null;
         String postContent;
         /* apply arcus memcached */
 
-        if ((post = postArcus.getPostInfo(id)) != null) { // search for b-tree element
-            if((postContent = postArcus.getPostContent(id)) == null) {//사실 여기 들어가면 안됨
+        // search for b-tree element
+        if ((post = postArcus.getPostInfo(id, board_id)) != null) {
+            if((postContent = postArcus.getPostContent(id)) == null) {
                 post = postRepository.selectOne(id);
                 postArcus.setPostContent(id, post.getContent());
                 return post;
@@ -58,11 +58,6 @@ public class PostService {
             }
         }
         else {
-            ///*temporary
-            post = postRepository.selectOne(id);
-
-            postArcus.setPostInfo(post);
-            //*/
             return postRepository.selectOne(id);
         }
     }
@@ -70,12 +65,13 @@ public class PostService {
     public List<Post> getPage(int board_id, int startList, int pageSize) {
         List<Post> posts;
 
-        ///*
-        if ((posts = postArcus.getPosts(board_id, startList, pageSize)) == null) { //key가 없는지 element가 없는지 구분해서~~
+
+        if ((posts = postArcus.getPosts(board_id, startList, pageSize)) == null) {
             System.out.println("11111");
             posts = postRepository.selectPage(board_id, startList, pageSize);
         }
-        //*/
+
+        posts = postRepository.selectPage(board_id, startList, pageSize);
         return posts;
     }
 

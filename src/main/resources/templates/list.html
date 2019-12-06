@@ -23,17 +23,15 @@
             <th>조회수</th>
         </tr>
         <tr th:each="post: ${posts}">
-            <form th:object="${post}" action="/post/detail" method="post">
                 <td>
-                    <a th:href="@{'/post/detail?id='+${post.id}}" th:text="${post.no}"></a>
+                    <a th:href="@{'/post/detail?id='+${post.id}+'&board_id='+${board_id}}" th:text="${post.no}"></a>
                 </td>
                 <td>
-                    <a name="title" th:href="@{'/post/detail?id='+${post.id}}"  th:text="${post.title}"></a>
+                    <a name="title" th:href="@{'/post/detail?id='+${post.id}+'&board_id='+${board_id}}"  th:text="${post.title}"></a>
                 </td>
                 <td th:text="${post.updated_date}? ${#dates.format(post.updated_date, 'yyyy-MM-dd hh:MM')}"></td>
                 <td th:text="${post.user_name}"></td>
                 <td th:text="${post.views}"></td>
-            </form>
         </tr>
     </table>
 
@@ -69,7 +67,7 @@
                     </li>
                 </ul>
         </div>
-        <form action="/post/write" method="post">
+        <form action="/post/write" method="get">
             <input type="hidden" name="board_id" th:value="${board_id}" />
             <button type="submit" class="btn btn-light">글 등록</button>
         </form>

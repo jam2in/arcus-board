@@ -3,18 +3,15 @@ package com.jam2in.arcus.board;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.model.PostInfo;
 import com.jam2in.arcus.board.repository.PostRepository;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.spy.memcached.ArcusClient;
 import net.spy.memcached.collection.*;
 import net.spy.memcached.internal.CollectionFuture;
-import net.spy.memcached.internal.CollectionGetBulkFuture;
 import net.spy.memcached.ops.CollectionOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.VfsUtils;
 import org.springframework.stereotype.Component;
-
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +46,18 @@ public class PostArcus {
             elements = future.get(1000, TimeUnit.MILLISECONDS);
 
             CollectionResponse response = future.getOperationStatus().getResponse();
-            //item doesn't exist
+            //item doesn't exist, therefore  create a new btree
             if(response.equals(CollectionResponse.NOT_FOUND)) {
                 boardArcus.bopCreateBoard(board_id);
-                this.setPosts(board_id);
                 logger.info("getPosts() : " + response.toString());
+                logger.info("btree created");
+                this.setPosts(board_id);
                 return getPosts(board_id, startList, pageSize);
             }
+
             //elements don't exist
             else if(response.equals(CollectionResponse.NOT_FOUND_ELEMENT)) {
+                //return null and get data from DB
                 logger.info("getPosts() : " + response.toString());
                 return null;
             }
@@ -65,8 +65,7 @@ public class PostArcus {
             else {
                 posts = new ArrayList<Post>();
                 for (Map.Entry<Integer, Element<Object>> each : elements.entrySet()) {
-                    //logger.info("element read : "+ each.getKey().toString());
-                    //logger.info("ee"+each.getValue().toString());
+                    logger.info("element read : "+ each.getKey().toString() + "//VALUE:" + each.getValue().toString());
                     PostInfo postInfo = (PostInfo)each.getValue().getValue();
                     posts.add(postInfo.getPost());
                 }
@@ -85,10 +84,8 @@ public class PostArcus {
         }
         return posts;
     }
-
-
     public void setPosts(int board_id) {
-        List<Post> posts = postRepository.selectPage(board_id, 0, 20);
+        List<Post> posts = postRepository.selectPage(board_id, 0, (int)BoardArcus.N);
         String key = "board"+board_id;
         List<Element<Object>> elements = new ArrayList<Element<Object>>();
 
@@ -106,7 +103,7 @@ public class PostArcus {
         CollectionFuture<Map<Integer, CollectionOperationStatus>> future = null;
 
         try {
-            future = arcusClient.asyncBopPipedInsertBulk(key, elements, new CollectionAttributes());
+            future = arcusClient.asyncBopPipedInsertBulk(key, elements, null);
         } catch (IllegalStateException e) {
         }
 
@@ -135,11 +132,12 @@ public class PostArcus {
             future.cancel(true);
         }
     }
-    public Post getPostInfo(int id) {
+
+    public Post getPostInfo(int id, int board_id) {
         Post post = null;
         PostInfo postInfo = null;
         CollectionFuture<Map<Long, Element<Object>>> future = null;
-        String key = "board1";
+        String key = "board"+board_id;
         ElementFlagFilter filter = new ElementFlagFilter(ElementFlagFilter.CompOperands.Equal, new byte[] {1, 1});
 
         future = arcusClient.asyncBopGet(key, (long)id, filter, false, false);
@@ -174,25 +172,30 @@ public class PostArcus {
         }
         return post;
     }
-
-    public boolean setPostInfo(Post post) {
-        boolean setSuccess = false;
+    public void setPostInfo(Post post) {
         CollectionFuture<Boolean> future = null;
-        CollectionAttributes attributes = new CollectionAttributes();
-        String key = "board1";
+        String key = "board"+post.getBoard_id();
         PostInfo postInfo = new PostInfo(post);
 
         try {
-            future = arcusClient.asyncBopInsert(key, (long)post.getId(), new byte[]{1,1}, postInfo, attributes);
-    } catch (IllegalStateException e) {
+            logger.info("eeeeeeeeeeee : " + post.getId());
+            future = arcusClient.asyncBopInsert(key, (long)post.getId(), new byte[]{1,1}, postInfo, null);
+        } catch (IllegalStateException e) {
         logger.error(e.getMessage());
-    }
+        }
 
-        if (future == null) return false;
+        if (future == null) return;
 
         try {
-            setSuccess = future.get(1000L, TimeUnit.MILLISECONDS); //timeout 1초
+            future.get(1000L, TimeUnit.MILLISECONDS); //timeout 1초
             logger.info("set postInfo : {}", future.getOperationStatus().getResponse());
+            CollectionResponse response = future.getOperationStatus().getResponse();
+            if (response.equals(CollectionResponse.OVERFLOWED)) {
+
+            }
+            if (response.equals(CollectionResponse.OUT_OF_RANGE)) {
+
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -203,15 +206,44 @@ public class PostArcus {
             e.printStackTrace();
             future.cancel(true);
         }
-        return setSuccess;
+    }
+    public void delPostInfo(int id, int board_id) {
+        CollectionFuture<Boolean> future = null;
+        String key = "board"+board_id;
+
+        future = arcusClient.asyncBopDelete(key, id, ElementFlagFilter.DO_NOT_FILTER, false
+        );
+        try {
+            future.get();
+            CollectionResponse response = future.getOperationStatus().getResponse();
+            logger.info("delPostInfo(): {}", response.toString());
+        } catch (Exception e) {
+            logger.error("delPostInfo(): {}", e.getMessage());
+        }
+    }
+    public boolean updatePostInfo(Post post) {
+        Boolean result = false;
+        String key = "board"+post.getBoard_id();
+        CollectionFuture<Boolean> future = arcusClient.asyncBopUpdate(key, post.getId(), null, new PostInfo(post));
+
+        try {
+            result = future.get();
+            CollectionResponse response = future.getOperationStatus().getResponse();
+            logger.info("updatePostInfo(): {}", response.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public String getPostContent(int id) {
         Future<Object> future = null;
-        String key = "postC"+id;
+        String key = "post"+id;
         String post = null;
 
-        future = this.arcusClient.asyncGet(key);
+        future = arcusClient.asyncGet(key);
         if (future == null) return null;
         try {
             post = (String)future.get();
@@ -225,21 +257,20 @@ public class PostArcus {
         }
         return post;
     }
-
     public boolean setPostContent(int id, String post) {
         Future<Boolean> future = null;
-        String key = "postC"+id;
+        String key = "post"+id;
         boolean setSuccess = false;
 
         try {
-            future = this.arcusClient.set(key, 300,post);
+            future = arcusClient.set(key, 300,post);
             logger.info("setPostContent(): #{}", key);
         } catch (Exception e) {
             logger.error("setPostContent(): {}", e.getMessage());
         }
 
         try {
-            setSuccess = future.get(700L, TimeUnit.MILLISECONDS);
+            setSuccess = future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -252,19 +283,15 @@ public class PostArcus {
         }
         return setSuccess;
     }
-
-    public boolean delPostContent(int id) {
-        boolean deleteSuccess = false;
+    public void delPostContent(int id) {
         Future<Boolean> future = null;
         String key = "post"+id;
 
-        future = this.arcusClient.delete(key);
+        future = arcusClient.delete(key);
         try {
-            deleteSuccess = future.get();
-            logger.info("delPostContent(): #{}", key);
+            logger.info("delPostContent(): {}", future.get().toString());
         } catch (Exception e) {
             logger.error("delPostContent(): {}", e.getMessage());
         }
-        return deleteSuccess;
     }
 }

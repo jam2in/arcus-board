@@ -27,8 +27,12 @@
         <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
     </tr>
 </table>
-<a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}}">수정</a>
-<a class="btn btn-light" th:href="@{'/post/delete?id=' + ${post.id}}">삭제</a>
+<a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}+'&board_id='+${post.board_id}}">수정</a>
+<form action="/post/delete" method="post">
+    <input type="hidden" name="id" th:value="${post.id}"/>
+    <input type="hidden" name="board_id" th:value="${post.board_id}"/>
+    <button type="submit" class="btn btn-light">삭제</button>
+</form>
 <div id="commentList"></div>
 <div class="row">
     <div class="col">

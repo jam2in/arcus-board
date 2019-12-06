@@ -126,6 +126,6 @@ public class Pagination {
             if(pageCnt == 0) this.endRow = this.startRow;
             else this.endRow = this.pageCnt;
         }
-        System.out.println(this.listCnt + " " + this.pageCnt + " " + this.endRow);
+        //System.out.println(this.listCnt + " " + this.pageCnt + " " + this.endRow);
     }
 }

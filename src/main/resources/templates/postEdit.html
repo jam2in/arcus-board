@@ -7,9 +7,13 @@
     <title>Title</title>
 </head>
 <body>
+<div>
+    <h2>게시글 수정</h2>
+</div>
 <br/>
 <form action="/post/update" method="post">
     <input type="hidden" name="id" th:value="${post.id}"/>
+    <input type="hidden" name="board_id" th:value="${post.board_id}">
     <table class="table table-hover">
         <tr>
             <th>

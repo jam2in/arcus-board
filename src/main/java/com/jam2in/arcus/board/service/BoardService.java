@@ -33,6 +33,7 @@ public class BoardService {
     }
 
     public int remove(Board board) {
+        boardArcus.bopDelBoard(board.getId());
         return boardRepository.delete(board.getId());
     }
 

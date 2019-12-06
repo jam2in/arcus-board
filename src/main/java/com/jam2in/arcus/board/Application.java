@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Application {
     static ArcusClient arcusClient;
     public static void main(String[] args) {
-        arcusClient = ArcusClient.createArcusClient("1.255.51.181:8080", "test", new ConnectionFactoryBuilder());;
+        arcusClient = ArcusClient.createArcusClient("1.255.51.181:8080", "test", new ConnectionFactoryBuilder());
         System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
         SpringApplication.run(Application.class, args);
     }

@@ -189,13 +189,13 @@ function cmt_update(id, content) {
 }
 
 function cmt_edit(id, content, post_id) {
-    console.log('function cmt_edit');
+    console.log('function cmt_edit!!');
     var htmls = "";
     htmls += '<div class="my-3 p-3 bg-white rounded shadow-sm row" id="cid'+this.id+'">';
     htmls += '<form action="/cmt/update" method="post">';
     htmls += '<input type="hidden" id="id" name="id" value="'+id+'"/>';
     htmls += '<input type="hidden" id="post_id" name="post_id" value="'+post_id+'"/>';
-    htmls += '<textarea class="form-control col-6" rows="1" id="content" name="content" placeholder="'+content+'"></textarea>';
+    htmls += '<textarea class="form-control" style="width:100%;"rows="1" id="content" name="content" placeholder="'+content+'"></textarea>';
     htmls += '<a class="btn btn-light btn-sm" href="#" onclick="showCmtList()">취소</a>';
     htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_update('+id+',\''+content+'\')">수정</a>';
     htmls += '</form>';
