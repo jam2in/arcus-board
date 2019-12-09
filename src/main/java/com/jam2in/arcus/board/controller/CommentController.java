@@ -43,9 +43,9 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(path = "cmt/delete")
-    public void delete(@RequestParam int id) {
+    public void delete(@RequestParam int id, @RequestParam int post_id) {
         Comment comment = commentService.get(id);
-        if (commentService.delete(id) == 0) {
+        if (commentService.delete(id, post_id) == 0) {
             //Response HTTP Error (CONFLICT)
         }
         logger.info("[DELETED]comment : {}", id);
@@ -57,7 +57,7 @@ public class CommentController {
                                     @RequestParam (required = false, defaultValue = "1")int groupIndex,
                                     @RequestParam (required = false, defaultValue = "1")int pageIndex) {
         Pagination pagination = new Pagination();
-        pagination.setPageSize(20);
+        //pagination.setPageSize(20);
         pagination.setGroupSize(10);
         pagination.setListCnt(commentService.countCmt(post_id));
         pagination.pageInfo(groupIndex, pageIndex, pagination.getListCnt());
@@ -71,7 +71,7 @@ public class CommentController {
                                     @RequestParam int pageIndex,
                                     @RequestParam int groupIndex) {
         Pagination pagination = new Pagination();
-        pagination.setPageSize(20);
+        //pagination.setPageSize(20);
         pagination.setGroupSize(10);
         pagination.setListCnt(commentService.countCmt(post_id));
         pagination.pageInfo(groupIndex, pageIndex, pagination.getListCnt());

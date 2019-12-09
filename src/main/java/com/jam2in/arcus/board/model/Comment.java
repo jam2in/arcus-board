@@ -2,9 +2,10 @@ package com.jam2in.arcus.board.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Comment {
+public class Comment implements Serializable {
 
     private int id;
     private int user_id;

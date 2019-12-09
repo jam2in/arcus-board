@@ -16,9 +16,9 @@ import java.util.concurrent.TimeoutException;
 
 @Component
 public class BoardArcus {
-    public static final Logger logger = LoggerFactory.getLogger(BoardArcus.class);
+    private static final Logger logger = LoggerFactory.getLogger(BoardArcus.class);
     public static long N = 20;
-    public static long MAX = 20*100;
+    private static long MAX = 20*100;
     private ArcusClient arcusClient;
 
     BoardArcus() {
@@ -38,14 +38,8 @@ public class BoardArcus {
 
         try {
             setSuccess = future.get(1000L, TimeUnit.MILLISECONDS);
-            logger.info("{}", future.getOperationStatus().getResponse());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (ExecutionException e) {
+            logger.info("bopCreateBoard(): {}", future.getOperationStatus().getResponse());
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }

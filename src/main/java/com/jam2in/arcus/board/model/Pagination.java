@@ -11,7 +11,7 @@ public class Pagination {
     private int pageIndex;
     private int pageCnt;
     private int listCnt;
-    private int pageSize;
+    private int pageSize = 20;
     private int groupSize;
 
     public int getStartRow() {

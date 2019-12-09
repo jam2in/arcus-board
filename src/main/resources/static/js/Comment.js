@@ -56,8 +56,8 @@ function showCmtList(groupIndex, pageIndex){
                 htmls += '<div class="col-6 border-bottom horder-gray">' + this.content + '</div>';
                 htmls += '<div class="col-1 border-bottom horder-gray">' +this.user_name + '</div>';
                 htmls += '<div class="col-3 border-bottom horder-gray">' +updated_date + '</div>';
-                htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_delete('+this.id+',\''+this.post_id+'\')">삭제</a>';
-                htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_edit(' +this.id+',\'' +this.content+'\',\''+this.post_id+'\')">수정</a>';
+                htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_delete('+this.id+','+this.post_id+')">삭제</a>';
+                htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_edit(' +this.id+',\'' +this.content+'\','+this.post_id+')">수정</a>';
                 htmls += '</div>';
             });
             $("#commentList").html(htmls);
@@ -164,17 +164,17 @@ function cmt_delete(id, post_id) {
     $.ajax({
         url:"/cmt/delete",
         dataType: "text",
-        data: {id},
+        data: {"id":id, "post_id":post_id},
         success: function(result) {
             showCmtList();
         }
     });
 }
 
-function cmt_update(id, content) {
+function cmt_update(id, content, post_id) {
     var id = $("#id").val();
     var content = $("#content").val();
-    var comment = JSON.stringify({"id":id, "content":content});
+    var comment = JSON.stringify({"id":id, "content":content, "post_id":post_id});
     console.log('update : '+comment);
     $.ajax({
         url:"/cmt/update",
@@ -197,7 +197,7 @@ function cmt_edit(id, content, post_id) {
     htmls += '<input type="hidden" id="post_id" name="post_id" value="'+post_id+'"/>';
     htmls += '<textarea class="form-control" style="width:100%;"rows="1" id="content" name="content" placeholder="'+content+'"></textarea>';
     htmls += '<a class="btn btn-light btn-sm" href="#" onclick="showCmtList()">취소</a>';
-    htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_update('+id+',\''+content+'\')">수정</a>';
+    htmls += '<a class="btn btn-light btn-sm" href="#" onclick="cmt_update('+id+',\''+content+'\','+post_id+')">수정</a>';
     htmls += '</form>';
     htmls += '</div>';
 

@@ -67,7 +67,7 @@ public class PostController {
 
         //Comment List Pagination
         Pagination pagination = new Pagination();
-        pagination.setPageSize(20);
+        //pagination.setPageSize(20);
         pagination.setGroupSize(10);
         pagination.setListCnt(commentService.countCmt(post.getId()));
         pagination.pageInfo(1, 1, pagination.getListCnt());

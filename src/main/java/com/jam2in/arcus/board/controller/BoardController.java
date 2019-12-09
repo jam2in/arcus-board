@@ -117,7 +117,7 @@ public class BoardController {
         int listCnt = postService.countPost(id);
 
         Pagination pagination = new Pagination();
-        pagination.setPageSize(20);
+        //pagination.setPageSize(20);
         pagination.setGroupSize(10);
         pagination.pageInfo(groupIndex, pageIndex, listCnt);
         model.addAttribute("board_id", id);

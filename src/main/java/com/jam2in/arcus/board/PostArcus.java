@@ -3,7 +3,6 @@ package com.jam2in.arcus.board;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.model.PostInfo;
 import com.jam2in.arcus.board.repository.PostRepository;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.spy.memcached.ArcusClient;
 import net.spy.memcached.collection.*;
 import net.spy.memcached.internal.CollectionFuture;
@@ -37,10 +36,9 @@ public class PostArcus {
         List<Post> posts = null;
         String key = "board"+board_id;
         int count = 20;
-        ElementFlagFilter filter = ElementFlagFilter.DO_NOT_FILTER;
         CollectionFuture<Map<Integer, Element<Object>>> future = null;
         Map<Integer, Element<Object>> elements = null;
-        future = arcusClient.asyncBopGetByPosition(key, BTreeOrder.DESC, startList*pageSize, startList*pageSize + count-1);
+        future = arcusClient.asyncBopGetByPosition(key, BTreeOrder.DESC, startList, startList + pageSize-1);
 
         try {
             elements = future.get(1000, TimeUnit.MILLISECONDS);
@@ -51,7 +49,7 @@ public class PostArcus {
                 boardArcus.bopCreateBoard(board_id);
                 logger.info("getPosts() : " + response.toString());
                 logger.info("btree created");
-                this.setPosts(board_id);
+                setPosts(board_id);
                 return getPosts(board_id, startList, pageSize);
             }
 
@@ -72,13 +70,7 @@ public class PostArcus {
                 logger.info("getPosts() : " + response.toString());
             }
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }
@@ -91,6 +83,10 @@ public class PostArcus {
 
         if (posts.size() > arcusClient.getMaxPipedItemCount()) {
             logger.error("PIPE_ERROR memory overflow");
+            return;
+        }
+
+        if (posts.size() == 0) {
             return;
         }
 
@@ -146,24 +142,20 @@ public class PostArcus {
             Map<Long, Element<Object>> result = future.get(1000L, TimeUnit.MILLISECONDS);
 
             CollectionResponse response = future.getOperationStatus().getResponse();
+            logger.info("getpostInfo(): "+response.toString());
             if (response.equals(CollectionResponse.NOT_FOUND)) {
-                logger.info("getpostInfo() : NOT_FOUND");
-                return null;
-            } else if (response.equals(CollectionResponse.NOT_FOUND_ELEMENT)) {
-                logger.info("getpostInfo() : NOT_FOUND_ELEMENT");
+                boardArcus.bopCreateBoard(board_id);
+                setPosts(board_id);
+                return getPostInfo(id, board_id);
+            }
+            if (response.equals(CollectionResponse.NOT_FOUND_ELEMENT)) {
                 return null;
             }
             postInfo = (PostInfo) result.get((long) id).getValue();
 
             logger.info("get postInfo : #{}", postInfo.getId());
             post = postInfo.getPost();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }
@@ -178,7 +170,6 @@ public class PostArcus {
         PostInfo postInfo = new PostInfo(post);
 
         try {
-            logger.info("eeeeeeeeeeee : " + post.getId());
             future = arcusClient.asyncBopInsert(key, (long)post.getId(), new byte[]{1,1}, postInfo, null);
         } catch (IllegalStateException e) {
         logger.error(e.getMessage());
@@ -190,19 +181,18 @@ public class PostArcus {
             future.get(1000L, TimeUnit.MILLISECONDS); //timeout 1초
             logger.info("set postInfo : {}", future.getOperationStatus().getResponse());
             CollectionResponse response = future.getOperationStatus().getResponse();
+            if (response.equals(CollectionResponse.NOT_FOUND)) {
+                boardArcus.bopCreateBoard(post.getBoard_id());
+                setPostInfo(post);
+                return;
+            }
             if (response.equals(CollectionResponse.OVERFLOWED)) {
 
             }
             if (response.equals(CollectionResponse.OUT_OF_RANGE)) {
 
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }
@@ -211,8 +201,7 @@ public class PostArcus {
         CollectionFuture<Boolean> future = null;
         String key = "board"+board_id;
 
-        future = arcusClient.asyncBopDelete(key, id, ElementFlagFilter.DO_NOT_FILTER, false
-        );
+        future = arcusClient.asyncBopDelete(key, id, ElementFlagFilter.DO_NOT_FILTER, false);
         try {
             future.get();
             CollectionResponse response = future.getOperationStatus().getResponse();
@@ -230,9 +219,7 @@ public class PostArcus {
             result = future.get();
             CollectionResponse response = future.getOperationStatus().getResponse();
             logger.info("updatePostInfo(): {}", response.toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return result;
@@ -248,10 +235,7 @@ public class PostArcus {
         try {
             post = (String)future.get();
             logger.info("getPostContent(): {}", post);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            future.cancel(true);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }

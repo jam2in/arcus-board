@@ -21,9 +21,7 @@ public class PostService {
     public int create(Post post) {
         //최신 글 N개를 캐싱해야하므로 생성하자마자 캐싱
         int result = postRepository.insert(post);
-        postArcus.setPostInfo(post);
-        //postArcus.setPostContent(post.getId(), post.getContent());
-        System.out.println(result);
+        postArcus.setPostInfo(get(post.getId(), post.getBoard_id()));
         return result;
     }
 
@@ -67,11 +65,9 @@ public class PostService {
 
 
         if ((posts = postArcus.getPosts(board_id, startList, pageSize)) == null) {
-            System.out.println("11111");
             posts = postRepository.selectPage(board_id, startList, pageSize);
         }
 
-        posts = postRepository.selectPage(board_id, startList, pageSize);
         return posts;
     }
 
