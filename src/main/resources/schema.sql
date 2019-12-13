@@ -43,5 +43,5 @@ CREATE TABLE IF NOT EXISTS comment (
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES user(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`post_id`) REFERENCES post(`id`) ON DELETE CASCADE,
-    INDEX idx_comment (`post_id`, `group`, `sequence`)
+    INDEX idx_comment (`post_id`, `id`)
 );

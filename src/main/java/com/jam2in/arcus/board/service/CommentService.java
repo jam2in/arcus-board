@@ -45,7 +45,6 @@ public class CommentService {
         if ((comments = commentArcus.getComments(post_id, startList, pageSize)) == null && startList != 0) {
             comments = commentRepository.selectPage(post_id, startList, pageSize);
         }
-
         return comments;
     }
 

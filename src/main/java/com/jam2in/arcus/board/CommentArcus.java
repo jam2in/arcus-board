@@ -2,24 +2,18 @@ package com.jam2in.arcus.board;
 
 import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.repository.CommentRepository;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.spy.memcached.ArcusClient;
 import net.spy.memcached.collection.*;
 import net.spy.memcached.internal.CollectionFuture;
 import net.spy.memcached.ops.CollectionOperationStatus;
-import org.hibernate.validator.internal.constraintvalidators.bv.time.future.FutureValidatorForReadableInstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.VfsUtils;
 import org.springframework.stereotype.Component;
-import sun.security.x509.FreshestCRLExtension;
 
-import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -29,35 +23,19 @@ import java.util.concurrent.TimeoutException;
 public class CommentArcus {
     private static final Logger logger = LoggerFactory.getLogger(PostArcus.class);
     private ArcusClient arcusClient;
+    private static int MAX = 20*3;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     public CommentArcus() {
-        this.arcusClient = Application.arcusClient;
+        this.arcusClient = Application.commentArcusClient;
     }
 
     public boolean bopCreateCmt(int post_id) {
         boolean result = false;
-        String key = "cmt"+post_id;
-        String post_key = "post"+post_id;
-        long N = 20;
-        long MAX= N * 100;
-        Future<Object> post = arcusClient.asyncGet(post_key);
+        String key = "Comment:"+post_id;
 
-        // search for existing post element in b+tree
-        if (post == null) return false;
-        try {
-            if (post.get() == null) {
-                logger.info("Post b+tree NOT FOUND");
-                return false;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            post.cancel(true);
-            return false;
-        }
-
-        CollectionAttributes attributes = new CollectionAttributes(300, MAX, CollectionOverflowAction.smallest_trim);
+        CollectionAttributes attributes = new CollectionAttributes(300, (long)MAX, CollectionOverflowAction.smallest_trim);
         CollectionFuture<Boolean> future = arcusClient.asyncBopCreate(key, ElementValueType.OTHERS, attributes);
 
         try {
@@ -73,23 +51,38 @@ public class CommentArcus {
 
     public List<Comment> getComments(int post_id, int startList, int pageSize) {
         List<Comment> comments = null;
-        String key = "cmt"+post_id;
+        String key = "Comment:"+post_id;
         CollectionFuture<Map<Integer, Element<Object>>> future = null;
         Map<Integer, Element<Object>> elements = null;
+        CollectionFuture<Integer> cntFuture = null;
+
+        cntFuture = arcusClient.asyncBopGetItemCount(key, 0, Integer.MAX_VALUE, ElementFlagFilter.DO_NOT_FILTER);
+        try {
+            if (cntFuture.get() != null) {
+                int count = cntFuture.get();
+                //logger.info("count:{}, startList:{}", count, startList);
+                if (startList+pageSize > MAX) {
+                    setComments(post_id, count, MAX-count);
+                }
+                if (count <= startList && startList != MAX) {
+                    setComments(post_id, count, startList+pageSize-count);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
 
         future = arcusClient.asyncBopGetByPosition(key, BTreeOrder.DESC, startList, startList+pageSize-1);
         try {
             elements = future.get();
 
             CollectionResponse response = future.getOperationStatus().getResponse();
+            logger.info("getComments(): " + response.toString());
             if (response.equals(CollectionResponse.NOT_FOUND)) {
-                logger.info("getComments(): " + response.toString());
-                if (!bopCreateCmt(post_id)) return null;
-                setComments(post_id);
+                if (!setComments(post_id, startList, pageSize)) return null;
                 return getComments(post_id, startList, pageSize);
             }
             else if (response.equals(CollectionResponse.NOT_FOUND_ELEMENT)) {
-                logger.info("getComments(): " + response.toString());
                 return null;
             }
             comments = new ArrayList<Comment>();
@@ -98,54 +91,57 @@ public class CommentArcus {
                 Comment comment = (Comment)each.getValue().getValue();
                 comments.add(comment);
             }
-            logger.info("getComments(): " + response.toString());
+            logger.info(response.toString());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
         return comments;
     }
-    public void setComments(int post_id) {
-        List<Comment> comments = commentRepository.selectPage(post_id, 0, (int)BoardArcus.N);
-        String key = "cmt"+post_id;
+    public boolean setComments(int post_id, int startList, int pageSize) {
+        boolean result = false;
+        List<Comment> comments = commentRepository.selectPage(post_id, startList, pageSize);
+        String key = "Comment:"+post_id;
         CollectionFuture<Map<Integer, CollectionOperationStatus>> future = null;
         List<Element<Object>> elements = new ArrayList<>();
 
+        if(comments.size() == 0) return false;
         if(comments.size() > arcusClient.getMaxPipedItemCount()) {
             logger.error("PIPE_ERROR memory overflow");
-            return;
+            return false;
         }
-        if(comments.size() == 0) return;
 
         for(Comment comment: comments) {
             elements.add(new Element<Object>(comment.getId(), comment, new byte[]{1,1}));
             //logger.info("element added: "+ post.getId());
         }
 
-        future = arcusClient.asyncBopPipedInsertBulk(key, elements, null);
+        future = arcusClient.asyncBopPipedInsertBulk(key, elements, new CollectionAttributes(300, (long)MAX, CollectionOverflowAction.smallest_trim));
 
-        if (future == null) return;
+        if (future == null) return false;
 
         try {
-            Map<Integer, CollectionOperationStatus> result = future.get(1000L, TimeUnit.MILLISECONDS);
+            Map<Integer, CollectionOperationStatus> mapResult = future.get(1000L, TimeUnit.MILLISECONDS);
 
-            if (!result.isEmpty()) {
-                for (Map.Entry<Integer, CollectionOperationStatus> entry : result.entrySet()) {
+            if (!mapResult.isEmpty()) {
+                for (Map.Entry<Integer, CollectionOperationStatus> entry : mapResult.entrySet()) {
                     logger.error("failed element = " + elements.get(entry.getKey()));
                     logger.error(", caused by : " + entry.getValue().getResponse());
                 }
             }
             else {
-                logger.info("all inserted");
+                result = true;
+                logger.info("setComments() : all inserted");
             }
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
             future.cancel(true);
         }
+        return result;
     }
     public Comment getComment(int id, int post_id) {
         Comment comment = null;
-        String key = "cmt"+post_id;
+        String key = "Comment:"+post_id;
         CollectionFuture<Map<Long, Element<Object>>> future = arcusClient.asyncBopGet(key, (long)id, ElementFlagFilter.DO_NOT_FILTER, false, false);
 
         try {
@@ -159,19 +155,23 @@ public class CommentArcus {
         return comment;
     }
     public void setComment(Comment comment) {
-        String key = "cmt"+comment.getPost_id();
+        String key = "Comment:"+comment.getPost_id();
         CollectionFuture<Boolean> future = arcusClient.asyncBopInsert(key, comment.getId(), new byte[]{1,1}, comment, null);
 
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
-            logger.info("setComment(): " + future.getOperationStatus().getResponse().toString());
+            CollectionResponse response = future.getOperationStatus().getResponse();
+            logger.info("setComment(): " + response.toString());
+            if (response.equals(CollectionResponse.NOT_FOUND)) {
+                return;
+            }
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
         }
     }
     public void deleteComment(int id, int post_id) {
-        String key = "cmt"+post_id;
+        String key = "Comment:"+post_id;
         CollectionFuture<Boolean> future = arcusClient.asyncBopDelete(key, id, ElementFlagFilter.DO_NOT_FILTER, false);
 
         try {
@@ -184,7 +184,7 @@ public class CommentArcus {
 
     }
     public void updateComment(Comment updated) {
-        String key = "cmt"+updated.getPost_id();
+        String key = "Comment:"+updated.getPost_id();
         Comment comment = getComment(updated.getId(), updated.getPost_id());
         comment.setContent(updated.getContent());
         CollectionFuture<Boolean> future = arcusClient.asyncBopUpdate(key, comment.getId(), null, comment);

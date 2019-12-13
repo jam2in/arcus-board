@@ -18,17 +18,17 @@ import java.util.concurrent.TimeoutException;
 public class BoardArcus {
     private static final Logger logger = LoggerFactory.getLogger(BoardArcus.class);
     public static long N = 20;
-    private static long MAX = 20*100;
+    public static long MAX = N*100;
     private ArcusClient arcusClient;
 
     BoardArcus() {
-        this.arcusClient = Application.arcusClient;
+        this.arcusClient = Application.boardArcusClient;
     }
 
     public boolean bopCreateBoard(int id) {
         boolean setSuccess = false;
         CollectionFuture<Boolean> future = null;
-        String key="board"+id;
+        String key="Board:"+id;
         CollectionAttributes attributes = new CollectionAttributes(300, MAX, CollectionOverflowAction.smallest_trim);
         attributes.setExpireTime(300);
 
@@ -38,7 +38,7 @@ public class BoardArcus {
 
         try {
             setSuccess = future.get(1000L, TimeUnit.MILLISECONDS);
-            logger.info("bopCreateBoard(): {}", future.getOperationStatus().getResponse());
+            logger.info("bopCreateBoard(): #{} {}", key, future.getOperationStatus().getResponse());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -48,7 +48,7 @@ public class BoardArcus {
     }
 
     public void bopDelBoard(int id) {
-        String key = "board"+id;
+        String key = "Board:"+id;
         try {
             Future<Boolean> future = arcusClient.delete(key);
             logger.info("bopDelBoard(): {}", future.get().toString());

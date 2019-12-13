@@ -19,7 +19,6 @@ public class BoardService {
     private BoardArcus boardArcus;
 
     public int create(Board board) {
-        boardArcus.bopCreateBoard(board.getId());
         return boardRepository.insert(board);
     }
 

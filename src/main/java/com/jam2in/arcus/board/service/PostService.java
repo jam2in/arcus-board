@@ -21,13 +21,17 @@ public class PostService {
     public int create(Post post) {
         //최신 글 N개를 캐싱해야하므로 생성하자마자 캐싱
         int result = postRepository.insert(post);
-        postArcus.setPostInfo(get(post.getId(), post.getBoard_id()));
+        Post info = postRepository.selectOne(post.getId());
+        postArcus.setPostInfo(info);
         return result;
     }
 
     public int update(Post post) {
-        if (postArcus.updatePostInfo(post)) {
-            postArcus.setPostContent(post.getId(), post.getContent());
+        int id = post.getId();
+        String content = post.getContent();
+        if (postArcus.updatePostInfo(id, post.getBoard_id(), post.getTitle(), content)) {
+            System.out.println("Properly working");
+            postArcus.setPostContent(id, content);
         }
         return postRepository.update(post);
     }
@@ -38,13 +42,14 @@ public class PostService {
     }
 
     public Post get(int id, int board_id) {
-        increaseViews(id);
         Post post = null;
+        increaseViews(id);
         String postContent;
         /* apply arcus memcached */
 
         // search for b-tree element
         if ((post = postArcus.getPostInfo(id, board_id)) != null) {
+            postArcus.updatePostViews(post);
             if((postContent = postArcus.getPostContent(id)) == null) {
                 post = postRepository.selectOne(id);
                 postArcus.setPostContent(id, post.getContent());
@@ -77,7 +82,7 @@ public class PostService {
 
     public int countPost(int id) {return postRepository.countPost(id);}
 
-    public int increaseViews(int post_id) {
-        return  postRepository.increaseViews(post_id);
+    public int increaseViews(int id) {
+        return postRepository.increaseViews(id);
     }
 }

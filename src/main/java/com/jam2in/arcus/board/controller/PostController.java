@@ -42,12 +42,21 @@ public class PostController {
         return "redirect:/board/info?id="+post.getBoard_id();
     }
 
+    /*
     @RequestMapping(value = "/post/edit", method = RequestMethod.GET)
     public String edit(@RequestParam int id, @RequestParam int board_id, Model model) {
         logger.info("[EDIT]post_id : {}", id);
         model.addAttribute(postService.get(id, board_id));
         return "postEdit";
     }
+     */
+    @RequestMapping(value = "/post/edit", method = RequestMethod.POST)
+    public String edit(@ModelAttribute Post post ,Model model) {
+        logger.info("[EDIT]post_id : {}", post.getId());
+        model.addAttribute(model);
+        return "postEdit";
+    }
+
     @RequestMapping(value = "/post/update", method = RequestMethod.POST)
     public String update(@ModelAttribute Post post) {
         postService.update(post);
@@ -77,6 +86,7 @@ public class PostController {
         model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);
         model.addAttribute("pagination", pagination);
+
         return "detail";
     }
 

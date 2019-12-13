@@ -27,7 +27,13 @@
         <td colspan="2"  style="height:200px;" th:text="${post.content}"></td>
     </tr>
 </table>
-<a class="btn btn-light" th:href="@{'/post/edit?id=' + ${post.id}+'&board_id='+${post.board_id}}">수정</a>
+<form action="/post/edit" method="post">
+    <input type="hidden" name="id" th:value="${post.id}"/>
+    <input type="hidden" name="board_id" th:value="${post.board_id}"/>
+    <input type="hidden" name="title" th:value="${post.title}"/>
+    <input type="hidden" name="content" th:value="${post.content}"/>
+    <button type="submit" class="btn btn-light">수정</button>
+</form>
 <form action="/post/delete" method="post">
     <input type="hidden" name="id" th:value="${post.id}"/>
     <input type="hidden" name="board_id" th:value="${post.board_id}"/>
