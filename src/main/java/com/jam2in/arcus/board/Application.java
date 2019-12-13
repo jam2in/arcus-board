@@ -11,8 +11,9 @@ public class Application {
     static ArcusClient commentArcusClient;
 
     public static void main(String[] args) {
-        boardArcusClient = ArcusClient.createArcusClient("1.255.51.181:8080", "test", new ConnectionFactoryBuilder());
-        commentArcusClient = ArcusClient.createArcusClient("1.255.51.181:8080", "test", new ConnectionFactoryBuilder());
+        boardArcusClient = ArcusClient.createArcusClient("10.34.35.122:7289", "test", new ConnectionFactoryBuilder());
+        commentArcusClient = ArcusClient.createArcusClient("10.34.35.122:7289", "test", new ConnectionFactoryBuilder());
+        //commentArcusClient = ArcusClient.createArcusClient("1.255.51.181:8080", "test", new ConnectionFactoryBuilder());
         System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
         SpringApplication.run(Application.class, args);
     }
