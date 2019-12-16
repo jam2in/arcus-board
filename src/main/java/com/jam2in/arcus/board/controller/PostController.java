@@ -19,7 +19,7 @@ import java.util.List;
 @Controller
 public class PostController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+   // private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @Autowired
     private PostService postService;
@@ -30,14 +30,14 @@ public class PostController {
 
     @RequestMapping(value = "/post/write", method = RequestMethod.GET)
     public String write(@RequestParam("board_id") String board_id, Model model) {
-        logger.info("id : {}", board_id);
+    //    logger.info("id : {}", board_id);
         model.addAttribute("board_id", board_id);
         return "write";
     }
 
     @RequestMapping(value = "/post/upload", method = RequestMethod.POST)
     public String upload(@ModelAttribute Post post) {
-        logger.info("{}", post.getBoard_id());
+     //   logger.info("{}", post.getBoard_id());
         postService.create(post);
         return "redirect:/board/info?id="+post.getBoard_id();
     }
@@ -52,7 +52,7 @@ public class PostController {
      */
     @RequestMapping(value = "/post/edit", method = RequestMethod.POST)
     public String edit(@ModelAttribute Post post ,Model model) {
-        logger.info("[EDIT]post_id : {}", post.getId());
+        //logger.info("[EDIT]post_id : {}", post.getId());
         model.addAttribute(model);
         return "postEdit";
     }
@@ -66,7 +66,7 @@ public class PostController {
     @RequestMapping("/post/delete")
     public String delete(@RequestParam int id, @RequestParam int board_id) {
         postService.delete(id, board_id);
-        logger.info("[DELETE]post_id : {}", id);
+      //  logger.info("[DELETE]post_id : {}", id);
         return "redirect:/board/info?id=" + board_id;
     }
 
@@ -81,7 +81,7 @@ public class PostController {
         pagination.setListCnt(commentService.countCmt(post.getId()));
         pagination.pageInfo(1, 1, pagination.getListCnt());
 
-        logger.info("post detail #{}, pagination: {} {}", id, pagination.getStartRow(), pagination.getEndRow());
+       // logger.info("post detail #{}, pagination: {} {}", id, pagination.getStartRow(), pagination.getEndRow());
 
         model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);

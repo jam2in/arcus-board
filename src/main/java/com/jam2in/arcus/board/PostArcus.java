@@ -3,12 +3,10 @@ package com.jam2in.arcus.board;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.model.PostInfo;
 import com.jam2in.arcus.board.repository.PostRepository;
-import net.spy.memcached.ArcusClient;
+import net.spy.memcached.ArcusClientPool;
 import net.spy.memcached.collection.*;
 import net.spy.memcached.internal.CollectionFuture;
 import net.spy.memcached.ops.CollectionOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -21,15 +19,15 @@ import java.util.concurrent.TimeoutException;
 
 @Component
 public class PostArcus {
-    private static final Logger logger = LoggerFactory.getLogger(PostArcus.class);
-    private ArcusClient arcusClient;
+   // private static final Logger logger = LoggerFactory.getLogger(PostArcus.class);
+    private ArcusClientPool arcusClient;
     @Autowired
     private PostRepository postRepository;
     @Autowired
     private BoardArcus boardArcus;
 
     public PostArcus() {
-        this.arcusClient = Application.boardArcusClient;
+        this.arcusClient = Application.arcusClient;
     }
 
     public List<Post> getPosts(int board_id, int startList, int pageSize) {
@@ -61,7 +59,7 @@ public class PostArcus {
             elements = future.get(1000, TimeUnit.MILLISECONDS);
 
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("getPosts(){}: {}", key, response.toString());
+            //logger.info("getPosts(){}: {}", key, response.toString());
 
             if(response.equals(CollectionResponse.NOT_FOUND)) {
                 if (!setPosts(board_id, startList, pageSize)) return null;
@@ -76,7 +74,7 @@ public class PostArcus {
             else {
                 posts = new ArrayList<Post>();
                 for (Map.Entry<Integer, Element<Object>> each : elements.entrySet()) {
-                    logger.info("element read : "+ each.getKey().toString() + "//VALUE:" + each.getValue().toString());
+               //     logger.info("element read : "+ each.getKey().toString() + "//VALUE:" + each.getValue().toString());
                     PostInfo postInfo = (PostInfo)each.getValue().getValue();
                     posts.add(postInfo.getPost());
                 }
@@ -99,7 +97,7 @@ public class PostArcus {
             return false;
         }
         if (size > arcusClient.getMaxPipedItemCount()) {
-            logger.info("setPosts(): maxPipedItem");
+   //         logger.info("setPosts(): maxPipedItem");
             return false;
         }
 
@@ -124,13 +122,13 @@ public class PostArcus {
 
             if (!mapResult.isEmpty()) {
                 for (Map.Entry<Integer, CollectionOperationStatus> entry : mapResult.entrySet()) {
-                    logger.error("failed element = " + elements.get(entry.getKey()));
-                    logger.error(", caused by : " + entry.getValue().getResponse());
+    //                logger.error("failed element = " + elements.get(entry.getKey()));
+     //               logger.error(", caused by : " + entry.getValue().getResponse());
                 }
             }
             else {
                 result = true;
-                logger.info("all inserted");
+     //           logger.info("all inserted");
             }
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
@@ -152,7 +150,7 @@ public class PostArcus {
             Map<Long, Element<Object>> result = future.get(1000L, TimeUnit.MILLISECONDS);
 
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("getpostInfo(): "+response.toString());
+    //        logger.info("getpostInfo(): "+response.toString());
             if (response.equals(CollectionResponse.NOT_FOUND)) {
                 return null;
             }
@@ -161,7 +159,7 @@ public class PostArcus {
             }
             postInfo = (PostInfo) result.get((long) id).getValue();
 
-            logger.info("get postInfo : #{}", postInfo.getId());
+      //      logger.info("get postInfo : #{}", postInfo.getId());
             post = postInfo.getPost();
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
@@ -180,14 +178,14 @@ public class PostArcus {
         try {
             future = arcusClient.asyncBopInsert(key, (long)post.getId(), new byte[]{1,1}, postInfo, null);
         } catch (IllegalStateException e) {
-        logger.error(e.getMessage());
+    //    logger.error(e.getMessage());
         }
 
         if (future == null) return;
 
         try {
             future.get(1000L, TimeUnit.MILLISECONDS); //timeout 1초
-            logger.info("set postInfo : {} {}", future.getOperationStatus().getResponse(), post.toString());
+    //        logger.info("set postInfo : {} {}", future.getOperationStatus().getResponse(), post.toString());
             CollectionResponse response = future.getOperationStatus().getResponse();
             if (response.equals(CollectionResponse.NOT_FOUND)) {
                 return;
@@ -211,9 +209,9 @@ public class PostArcus {
         try {
             future.get();
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("delPostInfo(): {}", response.toString());
+      //      logger.info("delPostInfo(): {}", response.toString());
         } catch (Exception e) {
-            logger.error("delPostInfo(): {}", e.getMessage());
+       //     logger.error("delPostInfo(): {}", e.getMessage());
         }
     }
     public boolean updatePostInfo(int id, int board_id, String title, String content) {
@@ -227,7 +225,7 @@ public class PostArcus {
         try {
             result = future.get();
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("updatePostInfo(): {}", response.toString());
+      //      logger.info("updatePostInfo(): {}", response.toString());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -247,7 +245,7 @@ public class PostArcus {
         try {
             result = future.get();
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("updatePostViews(): {}", response.toString());
+      //      logger.info("updatePostViews(): {}", response.toString());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -263,7 +261,7 @@ public class PostArcus {
         if (future == null) return null;
         try {
             post = (String)future.get();
-            logger.info("getPostContent(): {}", post);
+     //       logger.info("getPostContent(): {}", post);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -277,9 +275,9 @@ public class PostArcus {
 
         try {
             future = arcusClient.set(key, 300,post);
-            logger.info("setPostContent(): #{}", key);
+    //        logger.info("setPostContent(): #{}", key);
         } catch (Exception e) {
-            logger.error("setPostContent(): {}", e.getMessage());
+    //        logger.error("setPostContent(): {}", e.getMessage());
         }
 
         try {
@@ -296,9 +294,9 @@ public class PostArcus {
 
         future = arcusClient.delete(key);
         try {
-            logger.info("delPostContent(): {}", future.get().toString());
+     //       logger.info("delPostContent(): {}", future.get().toString());
         } catch (Exception e) {
-            logger.error("delPostContent(): {}", e.getMessage());
+      //      logger.error("delPostContent(): {}", e.getMessage());
         }
     }
 
@@ -307,7 +305,7 @@ public class PostArcus {
         String key = "Board:post"+id;
 
         future = arcusClient.replace(key, 300, content);
-        logger.info("updatePostContent(): #{},{}",key, future.toString());
+    //    logger.info("updatePostContent(): #{},{}",key, future.toString());
 
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);

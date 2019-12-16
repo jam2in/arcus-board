@@ -1,12 +1,10 @@
 package com.jam2in.arcus.board;
 
-import net.spy.memcached.ArcusClient;
+import net.spy.memcached.ArcusClientPool;
 import net.spy.memcached.collection.CollectionAttributes;
 import net.spy.memcached.collection.CollectionOverflowAction;
 import net.spy.memcached.collection.ElementValueType;
 import net.spy.memcached.internal.CollectionFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -16,13 +14,13 @@ import java.util.concurrent.TimeoutException;
 
 @Component
 public class BoardArcus {
-    private static final Logger logger = LoggerFactory.getLogger(BoardArcus.class);
+ //   private static final Logger logger = LoggerFactory.getLogger(BoardArcus.class);
     public static long N = 20;
     public static long MAX = N*100;
-    private ArcusClient arcusClient;
+    private ArcusClientPool arcusClient;
 
     BoardArcus() {
-        this.arcusClient = Application.boardArcusClient;
+        this.arcusClient = Application.arcusClient;
     }
 
     public boolean bopCreateBoard(int id) {
@@ -38,7 +36,7 @@ public class BoardArcus {
 
         try {
             setSuccess = future.get(1000L, TimeUnit.MILLISECONDS);
-            logger.info("bopCreateBoard(): #{} {}", key, future.getOperationStatus().getResponse());
+        //    logger.info("bopCreateBoard(): #{} {}", key, future.getOperationStatus().getResponse());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -51,9 +49,9 @@ public class BoardArcus {
         String key = "Board:"+id;
         try {
             Future<Boolean> future = arcusClient.delete(key);
-            logger.info("bopDelBoard(): {}", future.get().toString());
+    //        logger.info("bopDelBoard(): {}", future.get().toString());
         } catch (Exception e) {
-            logger.error("bopDelBoard(): {}", e.getMessage());
+     //       logger.error("bopDelBoard(): {}", e.getMessage());
         }
     }
 }

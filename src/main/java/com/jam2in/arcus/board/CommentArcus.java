@@ -2,7 +2,7 @@ package com.jam2in.arcus.board;
 
 import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.repository.CommentRepository;
-import net.spy.memcached.ArcusClient;
+import net.spy.memcached.ArcusClientPool;
 import net.spy.memcached.collection.*;
 import net.spy.memcached.internal.CollectionFuture;
 import net.spy.memcached.ops.CollectionOperationStatus;
@@ -15,20 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Component
 public class CommentArcus {
     private static final Logger logger = LoggerFactory.getLogger(PostArcus.class);
-    private ArcusClient arcusClient;
+    private ArcusClientPool arcusClient;
     private static int MAX = 20*3;
     @Autowired
     private CommentRepository commentRepository;
 
     public CommentArcus() {
-        this.arcusClient = Application.commentArcusClient;
+        this.arcusClient = Application.arcusClient;
     }
 
     public boolean bopCreateCmt(int post_id) {
@@ -40,7 +39,7 @@ public class CommentArcus {
 
         try {
             result = future.get(1000L, TimeUnit.MILLISECONDS);
-            logger.info("bopCreateCmt() : " + future.getOperationStatus().getResponse().toString());
+         //   logger.info("bopCreateCmt() : " + future.getOperationStatus().getResponse().toString());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);
@@ -77,7 +76,7 @@ public class CommentArcus {
             elements = future.get();
 
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("getComments(): " + response.toString());
+            //logger.info("getComments(): " + response.toString());
             if (response.equals(CollectionResponse.NOT_FOUND)) {
                 if (!setComments(post_id, startList, pageSize)) return null;
                 return getComments(post_id, startList, pageSize);
@@ -87,11 +86,11 @@ public class CommentArcus {
             }
             comments = new ArrayList<Comment>();
             for (Map.Entry<Integer, Element<Object>> each : elements.entrySet()) {
-                logger.info("element read : "+ each.getValue().toString());
+                //logger.info("element read : "+ each.getValue().toString());
                 Comment comment = (Comment)each.getValue().getValue();
                 comments.add(comment);
             }
-            logger.info(response.toString());
+           // logger.info(response.toString());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -107,7 +106,7 @@ public class CommentArcus {
 
         if(comments.size() == 0) return false;
         if(comments.size() > arcusClient.getMaxPipedItemCount()) {
-            logger.error("PIPE_ERROR memory overflow");
+            //logger.error("PIPE_ERROR memory overflow");
             return false;
         }
 
@@ -125,13 +124,13 @@ public class CommentArcus {
 
             if (!mapResult.isEmpty()) {
                 for (Map.Entry<Integer, CollectionOperationStatus> entry : mapResult.entrySet()) {
-                    logger.error("failed element = " + elements.get(entry.getKey()));
-                    logger.error(", caused by : " + entry.getValue().getResponse());
+          //          logger.error("failed element = " + elements.get(entry.getKey()));
+             //       logger.error(", caused by : " + entry.getValue().getResponse());
                 }
             }
             else {
                 result = true;
-                logger.info("setComments() : all inserted");
+          //      logger.info("setComments() : all inserted");
             }
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
@@ -161,7 +160,7 @@ public class CommentArcus {
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("setComment(): " + response.toString());
+          //  logger.info("setComment(): " + response.toString());
             if (response.equals(CollectionResponse.NOT_FOUND)) {
                 return;
             }
@@ -177,7 +176,7 @@ public class CommentArcus {
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("deleteComment(): "+response.toString());
+         //   logger.info("deleteComment(): "+response.toString());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -192,7 +191,7 @@ public class CommentArcus {
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
             CollectionResponse response = future.getOperationStatus().getResponse();
-            logger.info("updatePostInfo(): {}", response.toString());
+       //     logger.info("updatePostInfo(): {}", response.toString());
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
             future.cancel(true);

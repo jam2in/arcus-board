@@ -1,5 +1,6 @@
 package com.jam2in.arcus.board.service;
 
+import com.jam2in.arcus.board.Application;
 import com.jam2in.arcus.board.BoardArcus;
 import com.jam2in.arcus.board.model.Board;
 import com.jam2in.arcus.board.repository.BoardRepository;
@@ -32,13 +33,13 @@ public class BoardService {
     }
 
     public int remove(Board board) {
-        boardArcus.bopDelBoard(board.getId());
+        if (Application.CACHE) {
+            boardArcus.bopDelBoard(board.getId());
+        }
         return boardRepository.delete(board.getId());
     }
 
     public Board get(int id) {
-        //temporary
-        //boardArcus.bopCreateBoard(id);
         return boardRepository.selectOne(id);
     }
 

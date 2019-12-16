@@ -80,21 +80,21 @@ public class BoardController {
     //************************************************************************************************
     @RequestMapping(path = "/board/create", method = RequestMethod.POST)
     public String create(@ModelAttribute Board board) {
-        LOGGER.info("CREATE BOARD");
+        //LOGGER.info("CREATE BOARD");
         boardService.create(board);
         return "redirect:/board";
     }
 
     @RequestMapping(path = "/board/update", method = RequestMethod.POST)
     public String update(@ModelAttribute Board board) {
-        LOGGER.info("UPDATE BOARD");
+        //LOGGER.info("UPDATE BOARD");
         boardService.update(board);
         return "board";
     }
 
     @RequestMapping(path = "/board/remove", method = RequestMethod.POST)
     public String delete(@ModelAttribute Board board) {
-        LOGGER.info("REMOVE BOARD");
+        //LOGGER.info("REMOVE BOARD");
         boardService.remove(board);
         return "redirect:/board";
     }
@@ -122,14 +122,14 @@ public class BoardController {
         model.addAttribute("board_id", id);
         model.addAttribute("board_name", boardService.get(id).getName());
         model.addAttribute("posts", postService.getPage(id, pagination.getStartList()-1, pagination.getPageSize()));
-        LOGGER.info("Board #{}, page#{} : {}", id, pagination.getGroupIndex(), pagination.getPageIndex());
+       // LOGGER.info("Board #{}, page#{} : {}", id, pagination.getGroupIndex(), pagination.getPageIndex());
         model.addAttribute("pagination", pagination);
         return "list";
     }
 
     @RequestMapping(path = "/board", method = RequestMethod.GET)
     public String getAll(Model model) {
-        LOGGER.info("GET ALL BOARD");
+        //LOGGER.info("GET ALL BOARD");
         model.addAttribute("boards", boardService.getAll());
         return "board";
     }

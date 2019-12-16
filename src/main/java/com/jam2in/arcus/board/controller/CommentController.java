@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 public class CommentController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+   // private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @Autowired
     CommentService commentService;
@@ -27,7 +27,7 @@ public class CommentController {
         if (commentService.create(comment) == 0) {
             //Response HTTP Error (CONFLICT)
         }
-        logger.info("[ADDED]comment : {}, post_id: {}", comment.getContent(), comment.getPost_id());
+        //logger.info("[ADDED]comment : {}, post_id: {}", comment.getContent(), comment.getPost_id());
     }
 
     @ResponseBody
@@ -36,7 +36,7 @@ public class CommentController {
         if (commentService.update(comment) == 0) {
             //Response HTTP Error (CONFLICT)
         }
-        logger.info("[EDIT]comment : {}", comment.getContent());
+        //logger.info("[EDIT]comment : {}", comment.getContent());
         //return "redirect:/post/detail?id=" + comment.getPost_id();
         return "";
     }
@@ -48,7 +48,7 @@ public class CommentController {
         if (commentService.delete(id, post_id) == 0) {
             //Response HTTP Error (CONFLICT)
         }
-        logger.info("[DELETED]comment : {}", id);
+        //logger.info("[DELETED]comment : {}", id);
     }
 
     @ResponseBody
