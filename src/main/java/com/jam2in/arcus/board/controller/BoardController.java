@@ -1,7 +1,9 @@
 package com.jam2in.arcus.board.controller;
 
+import com.jam2in.arcus.board.Test;
 import com.jam2in.arcus.board.model.Board;
 import com.jam2in.arcus.board.model.Pagination;
+import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.PostService;
 import org.slf4j.Logger;
@@ -115,12 +117,17 @@ public class BoardController {
 
         int listCnt = postService.countPost(id);
 
+        //Test test = new Test();
+        //test.uploadPost();
+        //System.out.println("test created!");
+
         Pagination pagination = new Pagination();
         //pagination.setPageSize(20);
         pagination.setGroupSize(10);
         pagination.pageInfo(groupIndex, pageIndex, listCnt);
         model.addAttribute("board_id", id);
-        model.addAttribute("board_name", boardService.get(id).getName());
+        //model.addAttribute("board_name", boardService.get(id).getName());
+        model.addAttribute("board_name", "(board_name)");
         model.addAttribute("posts", postService.getPage(id, pagination.getStartList()-1, pagination.getPageSize()));
        // LOGGER.info("Board #{}, page#{} : {}", id, pagination.getGroupIndex(), pagination.getPageIndex());
         model.addAttribute("pagination", pagination);

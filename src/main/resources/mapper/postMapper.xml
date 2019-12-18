@@ -31,11 +31,14 @@
 
     <select id="selectPage" resultType="com.jam2in.arcus.board.model.Post">
         SELECT p.*, u.name user_name
-        FROM post p INNER JOIN user u
-        ON p.user_id = u.id
-        WHERE p.board_id = #{board_id}
-        ORDER BY p.no DESC
+        FROM (
+        SELECT * FROM post
+        WHERE board_id = #{board_id}
+        ORDER BY no DESC
         LIMIT #{startList}, #{pageSize}
+        ) p INNER JOIN user u
+        ON p.user_id = u.id
+
     </select>
 
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">

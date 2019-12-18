@@ -2,9 +2,10 @@ package com.jam2in.arcus.board.service;
 
 import com.jam2in.arcus.board.Application;
 import com.jam2in.arcus.board.PostArcus;
+import com.jam2in.arcus.board.Test;
+import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
-import org.apache.ibatis.javassist.tools.rmi.AppletServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,11 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
+    private CommentService commentService;
+    @Autowired
     private PostArcus postArcus;
+    @Autowired
+    private Test test;
 
     public int create(Post post) {
         //최신 글 N개를 캐싱해야하므로 생성하자마자 캐싱
@@ -83,8 +88,22 @@ public class PostService {
             }
         }
         else {
+            //long start = System.currentTimeMillis();
             posts = postRepository.selectPage(board_id, startList, pageSize);
+            //long end = System.currentTimeMillis();
+            //System.out.println("실행시간 : " + (end-start)/1000.0);
         }
+
+        /*
+        for (Post post: posts) {
+            for (int i=0; i < 20; i++) {s
+                Comment comment = new Comment();
+                comment.setPost_id(post.getId());
+                comment.setContent("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                commentService.create(comment);
+            }
+        }
+         */
         return posts;
     }
 
