@@ -1,47 +1,53 @@
 CREATE TABLE IF NOT EXISTS `user` (
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
-    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-);
+  `uid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`uid`)
+) DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `board` (
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
-    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-);
+  `bid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
+  `category` int(11) NOT NULL,
+  `req_recent` bigint(20) NOT NULL DEFAULT '0',
+  `req_today` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`bid`)
+) DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `post` (
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id` BIGINT UNSIGNED NOT NULL,
-    `board_id` BIGINT UNSIGNED NOT NULL,
-    `no` INT UNSIGNED NOT NULL,
-    `title` VARCHAR(128) NOT NULL,
-    `content` TEXT NOT NULL,
-    `views` INT UNSIGNED NOT NULL DEFAULT 0,
-    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES user(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`board_id`) REFERENCES board(`id`) ON DELETE CASCADE,
-    INDEX idx_post (`board_id`, `no`)
-);
+  `pid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) unsigned NOT NULL,
+  `bid` bigint(20) unsigned NOT NULL,
+  `category` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `content` mediumtext NOT NULL,
+  `views` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `likes` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `cmtCnt` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`pid`),
+  KEY `foreign_uid` (`uid`),
+  KEY `idx_post` (`bid`,`pid`),
+  KEY `idx_board_best` (`bid`,`created_date`),
+  CONSTRAINT `post_board_bid` FOREIGN KEY (`bid`) REFERENCES `board` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `post_user_uid` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE NO ACTION ON UPDATE CASCADE
+) DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS comment (
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id` BIGINT UNSIGNED NOT NULL,
-    `post_id` BIGINT UNSIGNED NOT NULL,
-    `group` INT UNSIGNED NOT NULL,
-    `sequence` INT UNSIGNED NOT NULL,
-    `level` INT UNSIGNED NOT NULL,
-    `content` VARCHAR(128) NOT NULL,
-    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES user(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`post_id`) REFERENCES post(`id`) ON DELETE CASCADE,
-    INDEX idx_comment (`post_id`, `id`)
-);
+
+CREATE TABLE IF NOT EXISTS `comment` (
+  `cid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) unsigned NOT NULL,
+  `pid` bigint(20) unsigned NOT NULL,
+  `content` text NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`cid`),
+  KEY `foreign_uid` (`uid`),
+  KEY `idx_post` (`pid`,`cid`),
+  CONSTRAINT `comment_post_bid` FOREIGN KEY (`pid`) REFERENCES `post` (`pid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `comment_user_uid` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) DEFAULT CHARSET=utf8;
+

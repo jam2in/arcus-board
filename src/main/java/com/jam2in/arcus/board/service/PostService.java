@@ -1,119 +1,102 @@
 package com.jam2in.arcus.board.service;
 
-import com.jam2in.arcus.board.Application;
-import com.jam2in.arcus.board.PostArcus;
-import com.jam2in.arcus.board.Test;
-import com.jam2in.arcus.board.model.Comment;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class PostService {
-
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private PostArcus postArcus;
-    @Autowired
-    private Test test;
 
-    public int create(Post post) {
-        //최신 글 N개를 캐싱해야하므로 생성하자마자 캐싱
-        int result = postRepository.insert(post);
-        if (Application.CACHE) {
-            Post info = postRepository.selectOne(post.getId());
-            postArcus.setPostInfo(info);
-
-        }
-        return result;
+    public void insertPost(Post post) {
+        postRepository.insert(post);
     }
 
-    public int update(Post post) {
-        if (Application.CACHE) {
-            int id = post.getId();
-            String content = post.getContent();
-            if (postArcus.updatePostInfo(id, post.getBoard_id(), post.getTitle(), content)) {
-                System.out.println("Properly working");
-                postArcus.setPostContent(id, content);
-            }
-        }
-        return postRepository.update(post);
+    public void updatePost(Post post) {
+        postRepository.update(post);
     }
 
-    public int delete(int id, int board_id) {
-        if (Application.CACHE) {
-            postArcus.delPostInfo(id, board_id);
-        }
-        return postRepository.delete(id);
+    public void deletePost(int id) {
+        postRepository.delete(id);
     }
 
-    public Post get(int id, int board_id) {
-        Post post = null;
-        increaseViews(id);
-        String postContent;
-        /* apply arcus memcached */
-
-        // search for b-tree element
-        if (Application.CACHE && (post = postArcus.getPostInfo(id, board_id)) != null) {
-            postArcus.updatePostViews(post);
-            if((postContent = postArcus.getPostContent(id)) == null) {
-                post = postRepository.selectOne(id);
-                postArcus.setPostContent(id, post.getContent());
-                return post;
-            }
-            else {
-                post.setContent(postContent);
-                return post;
-            }
-        }
-        else {
-            return postRepository.selectOne(id);
-        }
+    public Post selectOnePost(int id) {
+        return postRepository.selectOne(id);
     }
 
-    public List<Post> getPage(int board_id, int startList, int pageSize) {
-        List<Post> posts;
-
-        if (Application.CACHE) {
-            if ((posts = postArcus.getPosts(board_id, startList, pageSize)) == null) {
-                posts = postRepository.selectPage(board_id, startList, pageSize);
-            }
-        }
-        else {
-            //long start = System.currentTimeMillis();
-            posts = postRepository.selectPage(board_id, startList, pageSize);
-            //long end = System.currentTimeMillis();
-            //System.out.println("실행시간 : " + (end-start)/1000.0);
-        }
-
-        /*
-        for (Post post: posts) {
-            for (int i=0; i < 20; i++) {s
-                Comment comment = new Comment();
-                comment.setPost_id(post.getId());
-                comment.setContent("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                commentService.create(comment);
-            }
-        }
-         */
-        return posts;
+    public List<Post> selectAll(int bid, int startList, int pageSize) {
+        return postRepository.selectAll(bid, startList, pageSize);
     }
 
-    public List<Post> getAll(int board_id) {
-        return postRepository.selectAll(board_id);
+    public List<Post> selectCategory(int bid, int category, int startList, int pageSize) {
+        return postRepository.selectCategory(bid, category, startList, pageSize);
     }
 
-    public int countPost(int id) {return postRepository.countPost(id);}
+    public List<Post> selectLikesAll() {
+        return postRepository.selectLikesAll();
+    }
+    public List<Post> selectLikesMonth() {
+        return postRepository.selectLikesMonth();
+    }
+    public List<Post> selectLikesToday() {
+        return postRepository.selectLikesToday();
+    }
 
-    public int increaseViews(int id) {
-        return postRepository.increaseViews(id);
+    public List<Post> selectViewsAll() {
+        return postRepository.selectViewsAll();
+    }
+    public List<Post> selectViewsMonth() {
+        return postRepository.selectViewsMonth();
+    }
+    public List<Post> selectViewsToday() {
+        return postRepository.selectViewsToday();
+    }
+
+    public List<Post> selectLikesAllBoard(int bid) {
+        return postRepository.selectLikesAllBoard(bid);
+    }
+    public List<Post> selectLikesMonthBoard(int bid) {
+        return postRepository.selectLikesMonthBoard(bid);
+    }
+    public List<Post> selectLikesTodayBoard(int bid) {
+        return postRepository.selectLikesTodayBoard(bid);
+    }
+
+    public List<Post> selectViewsAllBoard(int bid) {
+        return postRepository.selectViewsAllBoard(bid);
+    }
+    public List<Post> selectViewsMonthBoard(int bid) {
+        return postRepository.selectViewsMonthBoard(bid);
+    }
+    public List<Post> selectViewsTodayBoard(int bid) {
+        return postRepository.selectViewsTodayBoard(bid);
+    }
+
+    public int countPost(int bid) {
+        return postRepository.countPost(bid);
+    }
+
+    public int countPostCategory(int bid, int category) {
+        return postRepository.countPostCategory(bid, category);
+    }
+
+    public void increaseCmt(int pid) {
+        postRepository.increaseCmt(pid);
+    }
+
+    public void decreaseCmt(int pid) {
+        postRepository.decreaseCmt(pid);
+    }
+
+    public void increaseViews(int id) {
+        postRepository.increaseViews(id);
+    }
+
+    public void likePost(int id) {
+        postRepository.likePost(id);
     }
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="commonFragment">
+
+<header class="bg-dark py-5 mb-4">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+                <h1 class="display-3 mt-5 mb-5 text-white" th:onclick="location.href='/'">ARCUS BOARD</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col ms-4">
+            <h4 class="display-8 ml-5 mt-5 mb-4 text-white">언어</h4>
+            <div class="btn-group-vertical">
+                <th:block th:each="board : ${boardList}">
+                    <!--<input type="button" class="btn btn-link" th:if="${board.category == 0}" th:value="${board.name}" th:onclick="location.href=@{'/board?board_id='+${board.id}+'&board_name='+${board.name}}" >-->
+                    <a class="ml-5 mb-3" th:if="${board.category == 2}" th:href="@{'/board?bid='+${board.bid}}" th:text="${board.name}"></a>
+                </th:block>
+            </div>
+        </div>
+
+        <div class="col">
+            <h4 class="display-8 mt-5 mb-4 text-white">OS</h4>
+            <div class="btn-group-vertical">
+                <th:block th:each="board : ${boardList}">
+                    <a class="mb-3" th:if="${board.category == 3}" th:href="@{'/board?bid='+${board.bid}}" th:text="${board.name}"></a>
+                </th:block>
+            </div>
+        </div>
+
+        <div class="col">
+            <h4 class="display-8 mt-5 mb-4 text-white">Backend</h4>
+            <div class="btn-group-vertical">
+                <th:block th:each="board : ${boardList}">
+                    <a class="mb-3"  th:if="${board.category == 4}" th:href="@{'/board?bid='+${board.bid}}" th:text="${board.name}"></a>
+                </th:block>
+            </div>
+        </div>
+
+        <div class="col">
+            <h4 class="display-8 mt-5 mb-4 text-white">Frontend</h4>
+            <div class="btn-group-vertical">
+                <th:block th:each="board : ${boardList}">
+                    <a class="mb-3"  th:if="${board.category == 5}" th:href="@{'/board?bid='+${board.bid}}" th:text="${board.name}"></a>
+                </th:block>
+            </div>
+        </div>
+
+        <div class="col">
+            <h4 class="display-8 mt-5 mb-4 text-white">Cloud</h4>
+            <div class="btn-group-vertical">
+                <th:block th:each="board : ${boardList}">
+                    <a class="mb-3"  th:if="${board.category == 6}" th:href="@{'/board?bid='+${board.bid}}" th:text="${board.name}"></a>
+                </th:block>
+            </div>
+        </div>
+    </div>
+
+</header>
+
+
+</th:block>
+</html>

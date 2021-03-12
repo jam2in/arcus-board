@@ -1,24 +1,35 @@
 package com.jam2in.arcus.board.model;
 
+
+import java.sql.Timestamp;
+
+
 public class User {
+    private int uid;
+    private String name;
+    private Timestamp createdDate;
 
-    private int id;
-
-    private int name;
-
-    public int getUser_id() {
-        return id;
+    public int getUid() {
+        return uid;
     }
 
-    public void setUser_id(int user_id) {
-        this.id = user_id;
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 
-    public int getName() {
+    public String getName() {
         return name;
     }
-
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
 }
+

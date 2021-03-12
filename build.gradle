@@ -32,11 +32,21 @@ configurations.all {
     exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 }
 
+
 dependencies {
-    compile('com.navercorp.arcus:arcus-java-client:1.11.4')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-    compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.1')
-    compile('mysql:mysql-connector-java:8.0.18')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+    compile ('org.projectlombok:lombok')
+    compile ('javax.servlet:jstl:1.2')
+    runtimeOnly 'mysql:mysql-connector-java'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+}
+
+test {
+    useJUnitPlatform()
 }

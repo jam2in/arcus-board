@@ -7,10 +7,7 @@ import com.jam2in.arcus.board.service.BoardService;
 import com.jam2in.arcus.board.service.CommentService;
 import com.jam2in.arcus.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +15,6 @@ import java.util.List;
 
 @Controller
 public class PostController {
-
-   // private static final Logger logger = LoggerFactory.getLogger(PostController.class);
-
     @Autowired
     private PostService postService;
     @Autowired
@@ -28,71 +22,177 @@ public class PostController {
     @Autowired
     private CommentService commentService;
 
-    @RequestMapping(value = "/post/write", method = RequestMethod.GET)
-    public String write(@RequestParam("board_id") String board_id, Model model) {
-    //    logger.info("id : {}", board_id);
-        model.addAttribute("board_id", board_id);
-        return "write";
+    @RequestMapping(path = "/post/write")
+    public String writePost(@RequestParam("bid") int bid, @ModelAttribute Post post, Model model) {
+        String boardName = boardService.selectOneBoard(bid).getName();
+
+        model.addAttribute("bid", bid);
+        model.addAttribute("boardName", boardName);
+        model.addAttribute("boardList", boardService.selectAllBoard());
+
+        if (bid == 1) {
+            return "notice/write";
+        }
+        else {
+            return "post/write";
+        }
     }
 
-    @RequestMapping(value = "/post/upload", method = RequestMethod.POST)
-    public String upload(@ModelAttribute Post post) {
-     //   logger.info("{}", post.getBoard_id());
-        postService.create(post);
-        return "redirect:/board/info?id="+post.getBoard_id();
+    @RequestMapping( path = "/post/insert")
+    public String insertPost(@ModelAttribute Post post) {
+        boardService.increaseReqRecent(post.getBid());
+        boardService.increaseReqToday(post.getBid());
+
+        postService.insertPost(post);
+
+        if (post.getBid() == 1) {
+            return "redirect:/board?bid=1";
+        }
+        else {
+            return "redirect:/board?bid="+post.getBid();
+        }
     }
 
-    /*
-    @RequestMapping(value = "/post/edit", method = RequestMethod.GET)
-    public String edit(@RequestParam int id, @RequestParam int board_id, Model model) {
-        logger.info("[EDIT]post_id : {}", id);
-        model.addAttribute(postService.get(id, board_id));
-        return "postEdit";
-    }
-     */
-    @RequestMapping(value = "/post/edit", method = RequestMethod.POST)
-    public String edit(@ModelAttribute Post post ,Model model) {
-        //logger.info("[EDIT]post_id : {}", post.getId());
-        model.addAttribute(model);
-        return "postEdit";
-    }
+/*    @RequestMapping(path = "/post/detail")
+    public String postDetail(@RequestParam("pid") int pid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, @ModelAttribute Comment comment, Model model) {
+        postService.increaseViews(pid);
+        Post post = postService.selectOnePost(pid);
+        String boardName = boardService.selectOneBoard(post.getBid()).getName();
 
-    @RequestMapping(value = "/post/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute Post post) {
-        postService.update(post);
-        return "redirect:/post/detail?id="+post.getId()+"&board_id="+post.getBoard_id();
-    }
-
-    @RequestMapping("/post/delete")
-    public String delete(@RequestParam int id, @RequestParam int board_id) {
-        postService.delete(id, board_id);
-      //  logger.info("[DELETE]post_id : {}", id);
-        return "redirect:/board/info?id=" + board_id;
-    }
-
-    @RequestMapping("/post/detail")
-    public String detail(@RequestParam int id, @RequestParam int board_id, Model model) {
-        Post post = postService.get(id, board_id);
-
-        //Comment List Pagination
-        Pagination pagination = new Pagination();
-        //pagination.setPageSize(20);
-        pagination.setGroupSize(10);
-        pagination.setListCnt(commentService.countCmt(post.getId()));
-        pagination.pageInfo(1, 1, pagination.getListCnt());
-
-       // logger.info("post detail #{}, pagination: {} {}", id, pagination.getStartRow(), pagination.getEndRow());
-
-        model.addAttribute("comments", new Comment());
         model.addAttribute("post", post);
+        model.addAttribute("boardName", boardName);
+
+        if (post.getBid() == 0) {
+            return "notice/detail";
+        }
+        else {
+            return "post/detail";
+        }
+    }*/
+
+    @RequestMapping(path = "/post/detail", params = {"pid"})
+    public String postDetail(@RequestParam("pid") int pid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, @ModelAttribute Comment comment, Model model) {
+        postService.increaseViews(pid);
+        Post post = postService.selectOnePost(pid);
+        String boardName = boardService.selectOneBoard(post.getBid()).getName();
+        boardService.increaseReqRecent(post.getBid());
+        boardService.increaseReqToday(post.getBid());
+
+        Pagination pagination = new Pagination();
+        pagination.setGroupSize(5);
+        pagination.setPageSize(10);
+        pagination.pageInfo(groupIndex, pageIndex, post.getCmtCnt());
+
+        List<Comment> cmtList = commentService.selectAllCmt(pid, pagination.getStartList()-1, pagination.getPageSize());
+
+        model.addAttribute("post", post);
+        model.addAttribute("boardName", boardName);
+        model.addAttribute("boardList", boardService.selectAllBoard());
+
+        model.addAttribute("cmtList", cmtList);
         model.addAttribute("pagination", pagination);
 
-        return "detail";
+        if (post.getBid() == 1) {
+            return "notice/detail";
+        }
+        else {
+            return "post/detail";
+        }
     }
 
-    @RequestMapping("/post/comment")
-    public String comment() {
-        return "redirect:/detail";
+    @RequestMapping(path = "/post/detail", params = {"pid", "cid"})
+    public String postDetail(@RequestParam("pid") int pid, @RequestParam("cid") int cid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, Model model) {
+        postService.increaseViews(pid);
+        Post post = postService.selectOnePost(pid);
+        String boardName = boardService.selectOneBoard(post.getBid()).getName();
+        boardService.increaseReqRecent(post.getBid());
+        boardService.increaseReqToday(post.getBid());
+
+        Pagination pagination = new Pagination();
+        pagination.setGroupSize(5);
+        pagination.setPageSize(10);
+        pagination.pageInfo(groupIndex, pageIndex, post.getCmtCnt());
+
+        List<Comment> cmtList = commentService.selectAllCmt(pid, pagination.getStartList()-1, pagination.getPageSize());
+        Comment comment = commentService.selectOneCmt(cid);
+
+        model.addAttribute("post", post);
+        model.addAttribute("boardName", boardName);
+        model.addAttribute("boardList", boardService.selectAllBoard());
+
+        model.addAttribute("cmtList", cmtList);
+        model.addAttribute("pagination", pagination);
+        model.addAttribute("cid", cid);
+        model.addAttribute("comment", comment);
+
+        if (post.getBid() == 1) {
+            return "notice/detail";
+        }
+        else {
+            return "post/detail";
+        }
+
     }
+
+    @RequestMapping(path = "/post/edit")
+    public String editPost(@RequestParam("pid") int pid, Model model) {
+        Post post = postService.selectOnePost(pid);
+        String boardName = boardService.selectOneBoard(post.getBid()).getName();
+
+        model.addAttribute("post", post);
+        model.addAttribute("boardName", boardName);
+        model.addAttribute("boardList", boardService.selectAllBoard());
+
+        if (post.getBid() == 1) {
+            return "notice/edit";
+        }
+        else {
+            return "post/edit";
+        }
+    }
+
+    @RequestMapping(path = "/post/update")
+    public String updatePost(@ModelAttribute Post post) {
+        boardService.increaseReqRecent(post.getBid());
+        boardService.increaseReqToday(post.getBid());
+
+        postService.updatePost(post);
+
+        return "redirect:/post/detail?pid="+post.getPid();
+    }
+
+    @RequestMapping(path = "/post/delete")
+    public String deletePost(@RequestParam("pid") int pid) {
+        int bid = postService.selectOnePost(pid).getBid();
+        boardService.increaseReqRecent(bid);
+        boardService.increaseReqToday(bid);
+
+        postService.deletePost(pid);
+
+        if (bid == 1) {
+            return "redirect:/board?bid=1";
+        }
+        else {
+            return "redirect:/board?bid="+bid;
+        }
+    }
+
+
+    @RequestMapping(path = "/post/like")
+    public String likePost(@RequestParam("pid") int pid) {
+        postService.likePost(pid);
+        return "redirect:/post/detail?pid="+pid;
+    }
+
+/*    @ResponseBody
+    @RequestMapping(path = "/post/like", method = RequestMethod.POST, produces = "application/json; charset=utf8")
+    public ResponseEntity likePost(@RequestBody HashMap<String,Integer> hashMap) {
+        int pid = hashMap.get("pid");
+        postService.likePost(pid);
+
+        int likes = postService.selectOnePost(pid).getLikes();
+
+        return new ResponseEntity(likes, HttpStatus.OK);
+    }*/
 
 }

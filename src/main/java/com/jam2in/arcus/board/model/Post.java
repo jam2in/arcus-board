@@ -1,62 +1,60 @@
 package com.jam2in.arcus.board.model;
 
 
-import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Component
-public class Post implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private int id;
-    private int user_id;
-    private String user_name;
-    private int board_id;
-    private int no;
+public class Post {
+    private int pid;
+    private int uid;
+    private String userName;
+    private int bid;
+    private int category;
     private String title;
     private String content;
-    private Timestamp updated_date;
     private int views;
+    private int likes;
+    private int cmtCnt;
+    private Timestamp createdDate;
+    private Timestamp updatedDate;
 
-    public int getId() {
-        return id;
+    public int getPid() {
+        return pid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUid() {
+        return uid;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getBoard_id() {
-        return board_id;
+    public int getBid() {
+        return bid;
     }
 
-    public void setBoard_id(int board_id) {
-        this.board_id = board_id;
+    public void setBid(int bid) {
+        this.bid = bid;
     }
 
-    public int getNo() {
-        return no;
+    public int getCategory() {
+        return category;
     }
 
-    public void setNo(int no) {
-        this.no = no;
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     public String getTitle() {
@@ -75,19 +73,43 @@ public class Post implements Serializable {
         this.content = content;
     }
 
-    public Timestamp getUpdated_date() {
-        return updated_date;
-    }
-
-    public void setUpdated_date(Timestamp updated_date) {
-        this.updated_date = updated_date;
-    }
-
     public int getViews() {
         return views;
     }
 
     public void setViews(int views) {
         this.views = views;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public int getCmtCnt() {
+        return cmtCnt;
+    }
+
+    public void setCmtCnt(int cmtCnt) {
+        this.cmtCnt = cmtCnt;
+    }
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Timestamp getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Timestamp updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

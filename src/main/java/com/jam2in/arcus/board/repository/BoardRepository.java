@@ -1,21 +1,23 @@
 package com.jam2in.arcus.board.repository;
 
 import com.jam2in.arcus.board.model.Board;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Mapper
 @Repository
 public interface BoardRepository {
-
-    int insert(Board board);
-
-    int update(Board board);
-
-    int delete(int id);
-
+    void insert(Board board);
+    void update(Board board);
+    void delete(int id);
     Board selectOne(int id);
-
     List<Board> selectAll();
-
+    List<Board> selectBestRecent();
+    List<Board> selectBestToday();
+    void increaseReqRecent(int bid);
+    void increaseReqToday(int bid);
+    void resetReqRecent();
+    void resetReqToday();
 }

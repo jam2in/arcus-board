@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jam2in.arcus.board.repository.BoardRepository">
+    <insert id="insert">
+        INSERT INTO board(name, category)
+        VALUES (#{name}, #{category})
+    </insert>
+
+    <update id="update">
+        UPDATE board
+        SET name = #{name}
+        WHERE bid = #{bid}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM board
+        WHERE bid = #{bid}
+    </delete>
+
+    <select id="selectOne" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM board
+        WHERE bid = #{bid}
+    </select>
+
+    <select id="selectAll" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM board
+    </select>
+
+    <select id="selectBestRecent" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM board
+        ORDER BY req_recent DESC LIMIT 3;
+    </select>
+
+    <select id="selectBestToday" resultType="com.jam2in.arcus.board.model.Board">
+        SELECT * FROM board
+        ORDER BY req_today DESC LIMIT 3;
+    </select>
+
+    <update id="increaseReqRecent">
+        UPDATE board
+        SET req_recent = req_recent + 1
+        WHERE bid = #{bid}
+    </update>
+
+    <update id="increaseReqToday">
+        UPDATE board
+        SET req_today = req_today + 1
+        WHERE bid = #{bid}
+    </update>
+
+    <update id="resetReqRecent">
+        UPDATE board
+        SET req_recent = DEFAULT
+    </update>
+
+    <update id="resetReqToday">
+        UPDATE board
+        SET req_today = DEFAULT
+    </update>
+
+</mapper>

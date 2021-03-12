@@ -1,50 +1,58 @@
 package com.jam2in.arcus.board.service;
 
-import com.jam2in.arcus.board.Application;
-import com.jam2in.arcus.board.BoardArcus;
 import com.jam2in.arcus.board.model.Board;
 import com.jam2in.arcus.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class BoardService {
-
     @Autowired
     private BoardRepository boardRepository;
-    @Autowired
-    private BoardArcus boardArcus;
 
-    public int create(Board board) {
-        return boardRepository.insert(board);
+    public void insertBoard(Board board) {
+        boardRepository.insert(board);
     }
 
-    public int update(int id, Board board) {
-        board.setId(id);
-        return update(board);
+    public void updateBoard(Board board) {
+        boardRepository.update(board);
     }
 
-    public int update(Board board) {
-        return boardRepository.update(board);
+    public void deleteBoard(int id) {
+        boardRepository.delete(id);
     }
 
-    public int remove(Board board) {
-        if (Application.CACHE) {
-            boardArcus.bopDelBoard(board.getId());
-        }
-        return boardRepository.delete(board.getId());
-    }
-
-    public Board get(int id) {
+    public Board selectOneBoard(int id) {
         return boardRepository.selectOne(id);
     }
 
-    public List<Board> getAll() {
+    public List<Board> selectAllBoard() {
         return boardRepository.selectAll();
     }
 
+    public List<Board> selectBestRecent() {
+        return boardRepository.selectBestRecent();
+    }
+
+    public List<Board> selectBestToday() {
+        return boardRepository.selectBestToday();
+    }
+
+    public void increaseReqRecent(int bid) {
+        boardRepository.increaseReqRecent(bid);
+    }
+
+    public void increaseReqToday(int bid) {
+        boardRepository.increaseReqToday(bid);
+    }
+
+    public void resetReqRecent() {
+        boardRepository.resetReqRecent();
+    }
+
+    public void resetReqToday() {
+        boardRepository.resetReqToday();
+    }
 }

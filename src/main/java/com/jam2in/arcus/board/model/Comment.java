@@ -1,77 +1,47 @@
 package com.jam2in.arcus.board.model;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Comment implements Serializable {
-
-    private int id;
-    private int user_id;
-    private String user_name;
-    private int post_id;
-    private int group;
-    private int sequence;
-    private int level;
+public class Comment {
+    private int cid;
+    private int uid;
+    private String userName;
+    private int pid;
     private String content;
-    @DateTimeFormat (pattern = "yyyy-MM-dd hh:MM")
-    private Timestamp updated_date;
+    private Timestamp createdDate;
+    private Timestamp updatedDate;
 
-    public int getId() {
-        return id;
+    public int getCid() {
+        return cid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCid(int cid) {
+        this.cid = cid;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUid() {
+        return uid;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getPost_id() {
-        return post_id;
+    public int getPid() {
+        return pid;
     }
 
-    public void setPost_id(int post_id) {
-        this.post_id = post_id;
-    }
-
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 
     public String getContent() {
@@ -82,11 +52,19 @@ public class Comment implements Serializable {
         this.content = content;
     }
 
-    public Timestamp getUpdated_date() {
-        return updated_date;
+    public Timestamp getCreatedDate() {
+        return createdDate;
     }
 
-    public void setUpdated_date(Timestamp updated_date) {
-        this.updated_date = updated_date;
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Timestamp getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Timestamp updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }
