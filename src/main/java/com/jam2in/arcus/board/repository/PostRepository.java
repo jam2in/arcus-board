@@ -1,5 +1,6 @@
 package com.jam2in.arcus.board.repository;
 
+import com.jam2in.arcus.board.model.Category;
 import com.jam2in.arcus.board.model.Post;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +40,6 @@ public interface PostRepository {
 
     void increaseViews(int pid);
     void likePost(int pid);
+
+    List<Category> postCategoryAll();
 }

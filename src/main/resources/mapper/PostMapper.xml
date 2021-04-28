@@ -21,104 +21,104 @@
     </delete>
 
     <select id="selectOne" resultType="com.jam2in.arcus.board.model.Post">
-        SELECT p.*, u.name userName
-        FROM post p INNER JOIN user u
-        ON p.uid = u.uid
+        SELECT p.*, u.name userName, c.name categoryName
+        FROM post p INNER JOIN user u ON p.uid = u.uid
+        INNER JOIN category_post c ON p.category = c.id
         WHERE p.pid = #{pid}
     </select>
 
     <select id="selectAll" resultType="com.jam2in.arcus.board.model.Post">
-        SELECT p.*, u.name userName
+        SELECT p.*, u.name userName, c.name categoryName
         FROM (
         SELECT * FROM post
         WHERE bid = #{bid}
         ORDER BY pid DESC
         LIMIT #{startList}, #{pageSize}
-        ) p INNER JOIN user u
-        ON p.uid = u.uid
+        ) p INNER JOIN user u ON p.uid = u.uid
+        INNER JOIN category_post c ON p.category = c.id
         ORDER BY pid DESC
     </select>
 
     <select id="selectCategory" resultType="com.jam2in.arcus.board.model.Post">
-        SELECT p.*, u.name userName
+        SELECT p.*, u.name userName, c.name categoryName
         FROM (
         SELECT * FROM post
         WHERE bid = #{bid} and category = #{category}
         ORDER BY pid DESC
         LIMIT #{startList}, #{pageSize}
-        ) p INNER JOIN user u
-        ON p.uid = u.uid
+        ) p INNER JOIN user u ON p.uid = u.uid
+        INNER JOIN category_post c ON p.category = c.id
         ORDER BY pid DESC
     </select>
     
     <select id="selectLikesAll" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectLikesMonth" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE DATE(created_date) >= DATE_SUB(current_date(), INTERVAL 1 MONTH)
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectLikesToday" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE DATE(created_date) = DATE(current_date())
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectViewsAll" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="selectViewsMonth" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE DATE(created_date) >= DATE_SUB(current_date(), INTERVAL 1 MONTH)
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="selectViewsToday" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE DATE(created_date) = DATE(current_date())
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="selectLikesAllBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid}
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectLikesMonthBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid} and DATE(created_date) >= DATE_SUB(current_date(), INTERVAL 1 MONTH)
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectLikesTodayBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid} and DATE(created_date) = DATE(current_date())
-        ORDER BY likes DESC LIMIT 10;
+        ORDER BY likes DESC LIMIT 10
     </select>
 
     <select id="selectViewsAllBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid}
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="selectViewsMonthBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid} and DATE(created_date) >= DATE_SUB(current_date(), INTERVAL 1 MONTH)
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="selectViewsTodayBoard" resultType="com.jam2in.arcus.board.model.Post">
         SELECT * FROM post
         WHERE bid = ${bid} and DATE(created_date) = DATE(current_date())
-        ORDER BY views DESC LIMIT 10;
+        ORDER BY views DESC LIMIT 10
     </select>
 
     <select id="countPost" resultType="java.lang.Integer">
@@ -156,5 +156,9 @@
         SET likes = likes + 1
         WHERE pid = #{pid}
     </update>
+
+    <select id="postCategoryAll" resultType="com.jam2in.arcus.board.model.Category">
+        SELECT * FROM category_post
+    </select>
 
 </mapper>

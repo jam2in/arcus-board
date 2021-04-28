@@ -29,6 +29,7 @@ public class PostController {
         model.addAttribute("bid", bid);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
 
         if (bid == 1) {
             return "notice/write";
@@ -88,6 +89,7 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
 
         model.addAttribute("cmtList", cmtList);
         model.addAttribute("pagination", pagination);
@@ -119,6 +121,7 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
 
         model.addAttribute("cmtList", cmtList);
         model.addAttribute("pagination", pagination);
@@ -142,6 +145,8 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
+        model.addAttribute("postCategory", postService.postCategoryAll());
 
         if (post.getBid() == 1) {
             return "notice/edit";

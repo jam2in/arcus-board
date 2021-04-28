@@ -134,9 +134,9 @@
 <br/>
 <div>
     <a class="ml-3 mb-5 mt-5" th:href="@{'/board?bid='+${bid}+'&groupIndex='+${pagination.groupIndex}+'&pageIndex='+${pagination.pageIndex}+'&likesPeriod='+${likesPeriod}+'&viewsPeriod='+${viewsPeriod}}">전체</a>
-    <a class="ml-3 mb-5 mt-5" th:href="@{'/board?bid='+${bid}+'&category=1&groupIndex='+${pagination.groupIndex}+'&pageIndex='+${pagination.pageIndex}+'&likesPeriod='+${likesPeriod}+'&viewsPeriod='+${viewsPeriod}}">공지</a>
-    <a class="ml-3 mb-5 mt-5" th:href="@{'/board?bid='+${bid}+'&category=2&groupIndex='+${pagination.groupIndex}+'&pageIndex='+${pagination.pageIndex}+'&likesPeriod='+${likesPeriod}+'&viewsPeriod='+${viewsPeriod}}">질문</a>
-    <a class="ml-3 mb-5 mt-5" th:href="@{'/board?bid='+${bid}+'&category=3&groupIndex='+${pagination.groupIndex}+'&pageIndex='+${pagination.pageIndex}+'&likesPeriod='+${likesPeriod}+'&viewsPeriod='+${viewsPeriod}}">잡담</a>
+    <tr th:each="category: ${postCategory}">
+        <a class="ml-3 mb-5 mt-5" th:href="@{'/board?bid='+${bid}+'&category='+${category.id}+'&groupIndex='+${pagination.groupIndex}+'&pageIndex='+${pagination.pageIndex}+'&likesPeriod='+${likesPeriod}+'&viewsPeriod='+${viewsPeriod}}" th:text="${category.name}"></a>
+    </tr>
 </div>
 <br/>
 
@@ -144,19 +144,17 @@
     <table class="table">
         <tr>
             <th>추천</th>
+            <th></th>
             <th>분류</th>
             <th>제목</th>
             <th></th>
             <th>작성자</th>
             <th>조회수</th>
             <th>작성일</th>
-            <th></th>
         </tr>
         <tr th:each="post: ${postList}">
             <td th:text="${post.likes}"><td>
-            <span th:if="${post.category == 1}">공지</span>
-            <span th:if="${post.category == 2}">질문</span>
-            <span th:if="${post.category == 3}">잡담</span>
+            <td th:text="${post.categoryName}"></td>
             <td><a class="text-dark" th:text="${post.title}+'  ['+${post.cmtCnt}+']'" th:href="@{'/post/detail?pid='+${post.pid}}"></a><td>
             <td th:text="${post.userName}"></td>
             <td th:text="${post.views}"></td>

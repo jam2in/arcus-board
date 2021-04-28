@@ -31,12 +31,12 @@
 
     <select id="selectBestRecent" resultType="com.jam2in.arcus.board.model.Board">
         SELECT * FROM board
-        ORDER BY req_recent DESC LIMIT 3;
+        ORDER BY req_recent DESC LIMIT 3
     </select>
 
     <select id="selectBestToday" resultType="com.jam2in.arcus.board.model.Board">
         SELECT * FROM board
-        ORDER BY req_today DESC LIMIT 3;
+        ORDER BY req_today DESC LIMIT 3
     </select>
 
     <update id="increaseReqRecent">
@@ -60,5 +60,9 @@
         UPDATE board
         SET req_today = DEFAULT
     </update>
+
+    <select id="boardCategoryAll" resultType="com.jam2in.arcus.board.model.Category">
+        SELECT * FROM category_board
+    </select>
 
 </mapper>

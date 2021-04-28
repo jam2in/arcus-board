@@ -9,6 +9,7 @@ public class Post {
     private String userName;
     private int bid;
     private int category;
+    private String categoryName;
     private String title;
     private String content;
     private int views;
@@ -55,6 +56,14 @@ public class Post {
 
     public void setCategory(int category) {
         this.category = category;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTitle() {

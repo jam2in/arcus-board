@@ -46,6 +46,7 @@ public class TestController {
 		model.addAttribute("post", post);
 		model.addAttribute("boardName", boardName);
 		model.addAttribute("boardList", boardService.selectAllBoard());
+		model.addAttribute("boardCategory", boardService.boardCategoryAll());
 
 		model.addAttribute("cmtList", cmtList);
 		model.addAttribute("pagination", pagination);

@@ -1,5 +1,6 @@
 package com.jam2in.arcus.board.service;
 
+import com.jam2in.arcus.board.model.Category;
 import com.jam2in.arcus.board.model.Post;
 import com.jam2in.arcus.board.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,5 +99,9 @@ public class PostService {
 
     public void likePost(int id) {
         postRepository.likePost(id);
+    }
+
+    public List<Category> postCategoryAll(){
+        return postRepository.postCategoryAll();
     }
 }

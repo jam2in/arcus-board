@@ -1,6 +1,8 @@
 package com.jam2in.arcus.board.repository;
 
 import com.jam2in.arcus.board.model.Board;
+import com.jam2in.arcus.board.model.Category;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,5 @@ public interface BoardRepository {
     void increaseReqToday(int bid);
     void resetReqRecent();
     void resetReqToday();
+    List<Category> boardCategoryAll();
 }

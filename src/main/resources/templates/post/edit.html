@@ -27,13 +27,14 @@
             <label for="category" class="mt-3">분류</label>
             <div>
                 <select th:field="*{category}" id="category" name="category" required="required">
-                    <option selected th:if="${category == 1}">공지</option>
-                    <option selected th:if="${category == 2}">질문</option>
-                    <option selected th:if="${category == 3}">잡담</option>
-
-                    <option th:value="1">공지</option>
-                    <option th:value="2">질문</option>
-                    <option th:value="3">잡담</option>
+                    <tr th:each="category: ${postCategory}">
+                        <div th:if="${category.id==post.category}">
+                            <option th:value="${categoryStat.count}" th:text="${category.name}" selected></option>
+                        </div>
+                        <div th:unless="${category.id==post.category}">
+                            <option th:value="${categoryStat.count}" th:text="${category.name}"></option>
+                        </div>
+                    </tr>
                 </select>
             </div>
 

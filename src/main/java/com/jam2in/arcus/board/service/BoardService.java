@@ -1,6 +1,7 @@
 package com.jam2in.arcus.board.service;
 
 import com.jam2in.arcus.board.model.Board;
+import com.jam2in.arcus.board.model.Category;
 import com.jam2in.arcus.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,5 +55,9 @@ public class BoardService {
 
     public void resetReqToday() {
         boardRepository.resetReqToday();
+    }
+
+    public List<Category> boardCategoryAll() {
+        return boardRepository.boardCategoryAll();
     }
 }

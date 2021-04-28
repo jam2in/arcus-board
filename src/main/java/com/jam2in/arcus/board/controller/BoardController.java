@@ -88,6 +88,7 @@ public class BoardController {
 
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
 
         return "home";
     }
@@ -116,6 +117,8 @@ public class BoardController {
         model.addAttribute("bid", bid);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
+        model.addAttribute("postCategory", postService.postCategoryAll());
 
         List<Post> bestLikes;
         List<Post> bestViews;
@@ -185,6 +188,8 @@ public class BoardController {
         model.addAttribute("category", category);
         model.addAttribute("boardName", boardName);
         model.addAttribute("boardList", boardService.selectAllBoard());
+        model.addAttribute("boardCategory", boardService.boardCategoryAll());
+        model.addAttribute("postCategory", postService.postCategoryAll());
 
         List<Post> bestLikes;
         List<Post> bestViews;
