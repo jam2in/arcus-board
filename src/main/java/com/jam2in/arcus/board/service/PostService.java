@@ -104,4 +104,10 @@ public class PostService {
     public List<Category> postCategoryAll(){
         return postRepository.postCategoryAll();
     }
+
+    public Post selectLatestRandom(int bid) {
+        List<Post> postList = postRepository.selectAll(bid, 0, 100);
+        int index = (int)(Math.random() * 100);
+        return postList.get(index);
+    }
 }

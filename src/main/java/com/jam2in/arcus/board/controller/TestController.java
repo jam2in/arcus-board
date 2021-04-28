@@ -28,10 +28,10 @@ public class TestController {
 
 	@RequestMapping(path = "/test/post")
 	public String postDetail(@RequestParam("bid") int bid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, @ModelAttribute Comment comment, Model model) {
-		List<Post> postList = postService.selectAll(bid, 0, 100);
-		Post post = postList.get((int) Math.random()*100);
+		Post post = postService.selectLatestRandom(bid);
 		int pid = post.getPid();
 		postService.increaseViews(pid);
+
 		String boardName = boardService.selectOneBoard(bid).getName();
 		boardService.increaseReqRecent(bid);
 		boardService.increaseReqToday(bid);
@@ -58,9 +58,9 @@ public class TestController {
 
 	@RequestMapping(path = "/test/post/comment")
 	public String insertCmt(@RequestParam("bid") int bid, @RequestParam("uid") int uid, @RequestParam("content") String content) {
-		List<Post> postList = postService.selectAll(bid, 0, 100);
-		Post post = postList.get((int) Math.random()*100);
+		Post post = postService.selectLatestRandom(bid);
 		int pid = post.getPid();
+
 		Comment comment = new Comment();
 		comment.setPid(pid);
 		comment.setUid(uid);
@@ -77,8 +77,7 @@ public class TestController {
 
 	@RequestMapping(path = "/test/post/like")
 	public String likePost(@RequestParam("bid") int bid){
-		List<Post> postList = postService.selectAll(bid, 0, 100);
-		Post post = postList.get((int) Math.random()*100);
+		Post post = postService.selectLatestRandom(bid);
 		int pid = post.getPid();
 		postService.likePost(pid);
 

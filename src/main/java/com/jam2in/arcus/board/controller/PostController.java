@@ -73,8 +73,9 @@ public class PostController {
 
     @RequestMapping(path = "/post/detail", params = {"pid"})
     public String postDetail(@RequestParam("pid") int pid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, @ModelAttribute Comment comment, Model model) {
-        postService.increaseViews(pid);
         Post post = postService.selectOnePost(pid);
+        postService.increaseViews(pid);
+
         String boardName = boardService.selectOneBoard(post.getBid()).getName();
         boardService.increaseReqRecent(post.getBid());
         boardService.increaseReqToday(post.getBid());
@@ -104,8 +105,9 @@ public class PostController {
 
     @RequestMapping(path = "/post/detail", params = {"pid", "cid"})
     public String postDetail(@RequestParam("pid") int pid, @RequestParam("cid") int cid, @RequestParam(defaultValue = "1") int groupIndex, @RequestParam(defaultValue = "1") int pageIndex, Model model) {
-        postService.increaseViews(pid);
         Post post = postService.selectOnePost(pid);
+        postService.increaseViews(pid);
+
         String boardName = boardService.selectOneBoard(post.getBid()).getName();
         boardService.increaseReqRecent(post.getBid());
         boardService.increaseReqToday(post.getBid());
